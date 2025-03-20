@@ -7,6 +7,7 @@ interface ShinyTextProps {
   className?: string
   colorShift?: boolean
   colorSpeed?: number
+  style?: React.CSSProperties
 }
 
 export function ShinyText({
@@ -15,7 +16,8 @@ export function ShinyText({
   speed = 5,
   className,
   colorShift = false,
-  colorSpeed = 12
+  colorSpeed = 12,
+  style = {}
 }: ShinyTextProps) {
   // Для отладки: добавим console.log
   console.log("ShinyText render:", { text, disabled, speed, colorShift, colorSpeed });
@@ -43,6 +45,7 @@ export function ShinyText({
             `shine ${speed}s linear infinite, textColorPulse ${colorSpeed}s ease infinite` : 
             `shine ${speed}s linear infinite`) :
           'none',
+        ...style
       } as React.CSSProperties}
     >
       {text}

@@ -27,13 +27,13 @@ export default function Home() {
         speedFactor={isTranscribing ? 5 : 1} 
       />
       
-      <h1 className="relative z-10 mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
+      <h1 className="relative z-10 mb-8 text-center">
         <ShinyText 
           text="TERCELO" 
           speed={3}
           colorShift={true}
           colorSpeed={12}
-          className="text-4xl font-bold md:text-5xl lg:text-6xl font-[var(--font-audiowide)]"
+          className="text-4xl font-bold md:text-5xl lg:text-6xl font-audiowide"
         />
       </h1>
       

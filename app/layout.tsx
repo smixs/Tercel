@@ -1,15 +1,7 @@
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Audiowide } from "next/font/google";
-
-// Используем шрифт Audiowide из Google Fonts
-const audiowide = Audiowide({
-  subsets: ['latin'],
-  display: 'swap',
-  weight: ['400'],
-  variable: '--font-audiowide',
-});
+import { audiowide } from "@/app/fonts";
 
 export const metadata = {
   title: "TERCELO",
@@ -25,11 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru" suppressHydrationWarning className={audiowide.variable}>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          audiowide.variable
+          "min-h-screen bg-background font-sans antialiased"
         )}
       >
         <ThemeProvider
