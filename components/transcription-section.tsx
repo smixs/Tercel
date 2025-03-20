@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/alert"
 
 interface TranscriptionResult {
-  text: string | any // для поддержки как текста, так и JSON объекта
+  text: string | Record<string, unknown>
   format: "srt" | "json" | "text" | "vtt"
 }
 
@@ -76,9 +76,9 @@ export default function TranscriptionSection({
       } else {
         throw new Error(data.error || "Неизвестная ошибка")
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Ошибка обработки файла:", error)
-      setError(error.message || "Ошибка при транскрибировании")
+      setError(error instanceof Error ? error.message : "Ошибка при транскрибировании")
       return Promise.reject(error)
     } finally {
       setIsProcessing(false)
@@ -90,7 +90,7 @@ export default function TranscriptionSection({
   const handleDownload = () => {
     if (!result) return
     
-    let content = typeof result.text === 'object' 
+    const content = typeof result.text === 'object' 
       ? JSON.stringify(result.text, null, 2) 
       : result.text
       
@@ -126,13 +126,13 @@ export default function TranscriptionSection({
       })
   }
 
-  const formatResultText = (text: any, format: string) => {
+  const formatResultText = (text: string | Record<string, unknown>, format: string): string => {
     if (format === 'json') {
       return typeof text === 'object' 
         ? JSON.stringify(text, null, 2)
         : text
     }
-    return text
+    return text as string
   }
 
   const handleTabChange = (value: string) => {
@@ -164,7 +164,7 @@ export default function TranscriptionSection({
           <div className="space-y-4">
             <div className="col-span-4 w-full">
               <Dropzone 
-                onFileDrop={handleFileDrop} 
+                onFileDrop={handleFileDrop}
                 className="h-full" 
               />
             </div>
