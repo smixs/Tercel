@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FileText, Headphones, AlertCircle } from "lucide-react"
+import { FileText, Headphones, AlertCircle, ClipboardCopy } from "lucide-react"
 
 import { Dropzone } from "@/components/ui/dropzone"
 import { Button } from "@/components/ui/button"
@@ -94,6 +94,22 @@ export default function TranscriptionSection() {
     URL.revokeObjectURL(url)
   }
 
+  const handleCopy = () => {
+    if (!result) return
+    
+    const content = typeof result.text === 'object' 
+      ? JSON.stringify(result.text, null, 2) 
+      : result.text
+      
+    navigator.clipboard.writeText(content)
+      .then(() => {
+        console.log('Текст скопирован в буфер обмена')
+      })
+      .catch(err => {
+        console.error('Не удалось скопировать текст: ', err)
+      })
+  }
+
   const formatResultText = (text: any, format: string) => {
     if (format === 'json') {
       return typeof text === 'object' 
@@ -152,8 +168,12 @@ export default function TranscriptionSection() {
                   {formatResultText(result.text, result.format)}
                 </pre>
               </CardContent>
-              <CardFooter>
+              <CardFooter className="flex gap-2">
                 <Button onClick={handleDownload}>Скачать</Button>
+                <Button onClick={handleCopy} variant="outline">
+                  <ClipboardCopy className="mr-2 h-4 w-4" />
+                  Копировать
+                </Button>
               </CardFooter>
             </Card>
           )}
