@@ -2,7 +2,6 @@
 
 import { cn } from "@/lib/utils"
 import React, { useEffect, useRef, useState } from "react"
-import { useTheme } from "next-themes"
 
 interface MousePosition {
   x: number
@@ -37,10 +36,27 @@ interface ParticlesProps {
   ease?: number
   size?: number
   refresh?: boolean
-  color?: string
   vx?: number
   vy?: number
 }
+
+// Функция для генерации случайного светлого цвета
+const getRandomLightColor = (): string => {
+  // Базовый светлый оттенок (более высокие значения = светлее)
+  const minBrightness = 75 // Минимальная яркость (0-100)
+  
+  // Генерируем случайный оттенок (0-360)
+  const h = Math.floor(Math.random() * 360)
+  
+  // Умеренная насыщенность (40-70%)
+  const s = Math.floor(Math.random() * 30) + 40
+  
+  // Высокая яркость для светлых тонов (75-100%)
+  const l = Math.floor(Math.random() * (100 - minBrightness)) + minBrightness
+  
+  return `hsl(${h}, ${s}%, ${l}%)`
+}
+
 function hexToRgb(hex: string): number[] {
   hex = hex.replace("#", "")
 
@@ -58,19 +74,41 @@ function hexToRgb(hex: string): number[] {
   return [red, green, blue]
 }
 
+// Функция для преобразования HSL в RGB
+function hslToRgb(h: number, s: number, l: number): number[] {
+  s /= 100
+  l /= 100
+  const a = s * Math.min(l, 1 - l)
+  const f = (n: number, k = (n + h / 30) % 12) => l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+  return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)]
+}
+
+// Функция для конвертации HSL строки в RGB массив
+function parseHslToRgb(hslStr: string): number[] {
+  const hslRegex = /hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/
+  const match = hslStr.match(hslRegex) || hslStr.replace(/\s/g, '').match(/hsl\((\d+),(\d+)%,(\d+)%\)/)
+  
+  if (match) {
+    const h = parseInt(match[1], 10)
+    const s = parseInt(match[2], 10)
+    const l = parseInt(match[3], 10)
+    return hslToRgb(h, s, l)
+  }
+  
+  // Дефолтный белый цвет, если парсинг не удался
+  return [255, 255, 255]
+}
+
 const Particles: React.FC<ParticlesProps> = ({
   className = "",
-  quantity = 100,
+  quantity = 150,
   staticity = 50,
   ease = 50,
-  size = 0.4,
+  size = 1.2,
   refresh = false,
-  color = "#ffffff",
   vx = 0,
   vy = 0,
 }) => {
-  const { theme } = useTheme()
-  const [themeColor, setThemeColor] = useState(color)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
@@ -79,11 +117,6 @@ const Particles: React.FC<ParticlesProps> = ({
   const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 })
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1
-
-  useEffect(() => {
-    // Обновляем цвет в зависимости от темы
-    setThemeColor(theme === "dark" ? "#ffffff" : "#000000")
-  }, [theme])
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -96,7 +129,7 @@ const Particles: React.FC<ParticlesProps> = ({
     return () => {
       window.removeEventListener("resize", initCanvas)
     }
-  }, [themeColor])
+  }, [])
 
   useEffect(() => {
     onMouseMove()
@@ -136,6 +169,7 @@ const Particles: React.FC<ParticlesProps> = ({
     dx: number
     dy: number
     magnetism: number
+    color: string
   }
 
   const resizeCanvas = () => {
@@ -162,6 +196,8 @@ const Particles: React.FC<ParticlesProps> = ({
     const dx = (Math.random() - 0.5) * 0.1
     const dy = (Math.random() - 0.5) * 0.1
     const magnetism = 0.1 + Math.random() * 4
+    const color = getRandomLightColor()
+    
     return {
       x,
       y,
@@ -173,17 +209,22 @@ const Particles: React.FC<ParticlesProps> = ({
       dx,
       dy,
       magnetism,
+      color
     }
   }
 
-  const rgb = hexToRgb(themeColor)
-
   const drawCircle = (circle: Circle, update = false) => {
     if (context.current) {
-      const { x, y, translateX, translateY, size, alpha } = circle
+      const { x, y, translateX, translateY, size, alpha, color } = circle
       context.current.translate(translateX, translateY)
       context.current.beginPath()
       context.current.arc(x, y, size, 0, 2 * Math.PI)
+      
+      // Получаем RGB значения из HSL цвета
+      const rgb = color.startsWith('#') 
+        ? hexToRgb(color) 
+        : parseHslToRgb(color)
+      
       context.current.fillStyle = `rgba(${rgb.join(", ")}, ${alpha})`
       context.current.fill()
       context.current.setTransform(dpr, 0, 0, dpr, 0, 0)

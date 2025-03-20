@@ -3,7 +3,6 @@
 import { useCallback, useState, useEffect } from "react"
 import { useDropzone } from "react-dropzone"
 import { Upload, Check, Loader2 } from "lucide-react"
-import { useTheme } from "next-themes"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
@@ -23,7 +22,6 @@ export function Dropzone({
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState<FileStatus>("idle")
   const [progress, setProgress] = useState(0)
-  const { theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   // Добавляем эффект для установки mounted при монтировании на клиенте
@@ -83,13 +81,9 @@ export function Dropzone({
     if (isDragActive) return "border-primary/70 bg-primary/20"
     if (isUploading) return "border-yellow-500/70 bg-yellow-500/20"
     if (isSuccess) return "border-green-500/70 bg-green-500/20"
-
-    // Только применяем стили зависящие от темы, когда компонент смонтирован
-    if (!mounted) return "border-zinc-200 bg-white/80" // Дефолтный стиль для SSR
     
-    return resolvedTheme === "dark" 
-      ? "border-zinc-800 hover:border-primary/50 bg-zinc-800/50 hover:bg-zinc-800/70" 
-      : "border-zinc-200 hover:border-primary/50 bg-white/80 hover:bg-white/90"
+    // Всегда используем стили темной темы
+    return "border-zinc-800 hover:border-primary/50 bg-zinc-800/50 hover:bg-zinc-800/70"
   }
 
   const getGlowColor = () => {
