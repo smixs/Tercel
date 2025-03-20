@@ -122,7 +122,7 @@ export function Dropzone({
               {isIdle && (
                 <>
                   <p className="text-lg font-medium">
-                    Перетащите аудиофайл сюда или нажмите для выбора
+                    Кидай сюда или нажми
                   </p>
                   <p className="text-sm text-muted-foreground">
                     MP3, WAV, AAC, FLAC, OGG, M4A
