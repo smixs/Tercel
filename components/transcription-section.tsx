@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { FileText, Headphones, AlertCircle, ClipboardCopy } from "lucide-react"
+import { FileText, Headphones, AlertCircle, ClipboardCopy, Download } from "lucide-react"
 
 import { Dropzone } from "@/components/ui/dropzone"
 import { Button } from "@/components/ui/button"
@@ -169,7 +169,10 @@ export default function TranscriptionSection() {
                 </pre>
               </CardContent>
               <CardFooter className="flex gap-2">
-                <Button onClick={handleDownload}>Скачать</Button>
+                <Button onClick={handleDownload} variant="outline">
+                  <Download className="mr-2 h-4 w-4" />
+                  Скачать
+                </Button>
                 <Button onClick={handleCopy} variant="outline">
                   <ClipboardCopy className="mr-2 h-4 w-4" />
                   Копировать
