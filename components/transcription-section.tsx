@@ -18,7 +18,15 @@ interface TranscriptionResult {
   format: "srt" | "json" | "text" | "vtt"
 }
 
-export default function TranscriptionSection() {
+interface TranscriptionSectionProps {
+  onTranscriptionStart?: () => void
+  onTranscriptionEnd?: () => void
+}
+
+export default function TranscriptionSection({ 
+  onTranscriptionStart, 
+  onTranscriptionEnd 
+}: TranscriptionSectionProps) {
   const [result, setResult] = useState<TranscriptionResult | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [selectedFormat] = useState<"srt" | "json" | "text" | "vtt">("text")
@@ -29,6 +37,9 @@ export default function TranscriptionSection() {
     try {
       setIsProcessing(true)
       setError(null)
+      
+      // Вызываем колбэк начала транскрибирования
+      onTranscriptionStart?.()
       
       // Формируем данные для отправки на сервер
       const formData = new FormData()
@@ -71,6 +82,8 @@ export default function TranscriptionSection() {
       return Promise.reject(error)
     } finally {
       setIsProcessing(false)
+      // Вызываем колбэк окончания транскрибирования
+      onTranscriptionEnd?.()
     }
   }
 

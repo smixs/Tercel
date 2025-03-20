@@ -1,11 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 
-const API_KEY = "fw_3ZeGXXJSZkPNHQnLomqkcgp4"
+const API_KEY = process.env.API_KEY
 const API_URL = "https://audio-prod.us-virginia-1.direct.fireworks.ai/v1/audio/transcriptions"
 
 export async function POST(request: NextRequest) {
   try {
     console.log("Получен запрос на транскрибирование")
+    
+    if (!API_KEY) {
+      console.error("API ключ не настроен")
+      return NextResponse.json(
+        { error: "Сервис временно недоступен. API ключ не настроен." },
+        { status: 500 }
+      )
+    }
     
     const formData = await request.formData()
     const file = formData.get("file") as File | null

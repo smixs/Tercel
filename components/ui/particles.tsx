@@ -38,6 +38,7 @@ interface ParticlesProps {
   refresh?: boolean
   vx?: number
   vy?: number
+  speedFactor?: number
 }
 
 // Функция для генерации случайного светлого цвета
@@ -108,6 +109,7 @@ const Particles: React.FC<ParticlesProps> = ({
   refresh = false,
   vx = 0,
   vy = 0,
+  speedFactor = 1,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasContainerRef = useRef<HTMLDivElement>(null)
@@ -289,8 +291,12 @@ const Particles: React.FC<ParticlesProps> = ({
       } else {
         circle.alpha = circle.targetAlpha * remapClosestEdge
       }
-      circle.x += circle.dx + vx + (Math.random() - 0.5) * 0.1
-      circle.y += circle.dy + vy + (Math.random() - 0.5) * 0.1
+      
+      // Применяем множитель скорости к движению частиц
+      const speedMultiplier = speedFactor || 1
+      circle.x += (circle.dx + vx + (Math.random() - 0.5) * 0.1) * speedMultiplier
+      circle.y += (circle.dy + vy + (Math.random() - 0.5) * 0.1) * speedMultiplier
+      
       circle.translateX +=
         (mouse.current.x / (staticity / circle.magnetism) - circle.translateX) /
         ease
