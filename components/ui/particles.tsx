@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils"
 import React, { useEffect, useRef, useState } from "react"
+import { useTheme } from "next-themes"
 
 interface MousePosition {
   x: number
@@ -68,6 +69,8 @@ const Particles: React.FC<ParticlesProps> = ({
   vx = 0,
   vy = 0,
 }) => {
+  const { theme } = useTheme()
+  const [themeColor, setThemeColor] = useState(color)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
@@ -76,6 +79,11 @@ const Particles: React.FC<ParticlesProps> = ({
   const mouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const canvasSize = useRef<{ w: number; h: number }>({ w: 0, h: 0 })
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio : 1
+
+  useEffect(() => {
+    // Обновляем цвет в зависимости от темы
+    setThemeColor(theme === "dark" ? "#ffffff" : "#000000")
+  }, [theme])
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -88,7 +96,7 @@ const Particles: React.FC<ParticlesProps> = ({
     return () => {
       window.removeEventListener("resize", initCanvas)
     }
-  }, [color])
+  }, [themeColor])
 
   useEffect(() => {
     onMouseMove()
@@ -168,7 +176,7 @@ const Particles: React.FC<ParticlesProps> = ({
     }
   }
 
-  const rgb = hexToRgb(color)
+  const rgb = hexToRgb(themeColor)
 
   const drawCircle = (circle: Circle, update = false) => {
     if (context.current) {
