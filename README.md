@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Tercel - Приложение для транскрибирования аудиофайлов
 
-## Getting Started
+Tercel - это современное веб-приложение для транскрибирования аудиофайлов с элегантным минималистичным интерфейсом.
 
-First, run the development server:
+## Особенности
+
+- Минималистичный интерфейс с анимированным фоном из частиц
+- Стильная полупрозрачная зона загрузки с неоновыми акцентами
+- Поддержка различных форматов вывода (SRT, VTT, JSON, TEXT)
+- Темная и светлая тема
+- Визуальная обратная связь в процессе загрузки и обработки
+- Адаптивный дизайн для различных устройств
+
+## Технический стек
+
+- Next.js 14
+- React 19
+- TypeScript
+- TailwindCSS
+- Shadcn/UI
+- Next-themes для управления темами
+
+## Установка и запуск
+
+1. Установите зависимости:
+
+```bash
+npm install
+```
+
+2. Запустите приложение в режиме разработки:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3. Откройте [http://localhost:3000](http://localhost:3000) в вашем браузере для доступа к приложению.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Приложение взаимодействует с локальным Python-скриптом для выполнения транскрибирования через API-маршрут `/api/transcribe`.
 
-## Learn More
+Для работы необходимо иметь Python-скрипт `transcriber.py` в корневой директории проекта, который использует Fireworks AI API для транскрибирования.
 
-To learn more about Next.js, take a look at the following resources:
+### Формат запроса
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Запрос отправляется как `multipart/form-data` с следующими полями:
+- `file` - аудиофайл для транскрибирования
+- `format` - формат вывода (srt, vtt, json, text)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Формат ответа
 
-## Deploy on Vercel
+```json
+{
+  "success": true,
+  "text": "содержимое транскрибированного текста",
+  "format": "формат транскрибирования"
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Структура проекта
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+frontend/
+├── app/
+│   ├── api/
+│   │   └── transcribe/
+│   │       └── route.ts     # API-маршрут для транскрибирования
+│   ├── globals.css         # Глобальные стили
+│   ├── layout.tsx          # Корневой макет приложения
+│   └── page.tsx            # Главная страница
+├── components/
+│   ├── ui/
+│   │   ├── button.tsx      # Компонент кнопки
+│   │   ├── card.tsx        # Компонент карточки
+│   │   ├── dropzone.tsx    # Компонент зоны загрузки файлов
+│   │   ├── particles.tsx   # Компонент анимированных частиц
+│   │   └── ...             # Другие UI-компоненты
+│   ├── transcription-section.tsx # Основной компонент транскрибирования
+│   ├── mode-toggle.tsx     # Компонент переключения темы
+│   └── theme-provider.tsx  # Провайдер темы
+└── lib/
+    └── utils.ts            # Утилиты
+```
+
+## Лицензия
+
+MIT
