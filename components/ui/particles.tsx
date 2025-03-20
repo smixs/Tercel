@@ -193,8 +193,8 @@ const Particles: React.FC<ParticlesProps> = ({
     const pSize = Math.floor(Math.random() * 2) + size
     const alpha = 0
     const targetAlpha = parseFloat((Math.random() * 0.6 + 0.1).toFixed(1))
-    const dx = (Math.random() - 0.5) * 0.1
-    const dy = (Math.random() - 0.5) * 0.1
+    const dx = (Math.random() - 0.5) * 0.3
+    const dy = (Math.random() - 0.5) * 0.3
     const magnetism = 0.1 + Math.random() * 4
     const color = getRandomLightColor()
     
@@ -289,8 +289,8 @@ const Particles: React.FC<ParticlesProps> = ({
       } else {
         circle.alpha = circle.targetAlpha * remapClosestEdge
       }
-      circle.x += circle.dx + vx
-      circle.y += circle.dy + vy
+      circle.x += circle.dx + vx + (Math.random() - 0.5) * 0.1
+      circle.y += circle.dy + vy + (Math.random() - 0.5) * 0.1
       circle.translateX +=
         (mouse.current.x / (staticity / circle.magnetism) - circle.translateX) /
         ease
