@@ -77,13 +77,13 @@ export function Dropzone({
   const isError = status === "error"
 
   const getStatusColor = () => {
-    if (isDragReject || isError) return "border-red-500 bg-red-500/10"
-    if (isDragActive) return "border-primary/70 bg-primary/20"
-    if (isUploading) return "border-yellow-500/70 bg-yellow-500/20"
-    if (isSuccess) return "border-green-500/70 bg-green-500/20"
+    if (isDragReject || isError) return "border-red-500"
+    if (isDragActive) return "border-primary/70"
+    if (isUploading) return "border-yellow-500/70"
+    if (isSuccess) return "border-green-500/70"
     
-    // Всегда используем стили темной темы
-    return "border-zinc-800 hover:border-primary/50 bg-zinc-800/50 hover:bg-zinc-800/70"
+    // Прозрачный фон с сохранением границы
+    return "border-zinc-800/50 hover:border-primary/50"
   }
 
   const getGlowColor = () => {
@@ -103,7 +103,7 @@ export function Dropzone({
   return (
     <Card
       className={cn(
-        "relative w-full max-w-2xl overflow-hidden transition-all duration-300",
+        "relative w-full max-w-2xl overflow-hidden transition-all duration-300 bg-transparent backdrop-blur-sm",
         getGlowColor(),
         className
       )}
@@ -112,14 +112,14 @@ export function Dropzone({
         <div
           {...getRootProps({
             className: cn(
-              "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-6 transition-all duration-200",
+              "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-6 transition-all duration-200 bg-transparent backdrop-blur-[2px]",
               getStatusColor()
             ),
           })}
         >
           <input {...getInputProps()} />
 
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-background/30 backdrop-blur-md">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-background/10 backdrop-blur-md">
             {isUploading && <Loader2 className="h-8 w-8 animate-spin text-primary" />}
             {isSuccess && <Check className="h-8 w-8 text-green-500" />}
             {isError && <Upload className="h-8 w-8 text-red-500" />}
