@@ -21,7 +21,7 @@ interface TranscriptionResult {
 export default function TranscriptionSection() {
   const [result, setResult] = useState<TranscriptionResult | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [selectedFormat, setSelectedFormat] = useState<"srt" | "json" | "text" | "vtt">("text")
+  const [selectedFormat] = useState<"srt" | "json" | "text" | "vtt">("text")
   const [activeTab, setActiveTab] = useState("upload")
   const [error, setError] = useState<string | null>(null)
 
@@ -69,10 +69,6 @@ export default function TranscriptionSection() {
     } finally {
       setIsProcessing(false)
     }
-  }
-
-  const handleFormatChange = (format: string) => {
-    setSelectedFormat(format as "srt" | "json" | "text" | "vtt")
   }
 
   const handleDownload = () => {
@@ -134,30 +130,11 @@ export default function TranscriptionSection() {
         </TabsList>
         <TabsContent value="upload" className="mt-4">
           <div className="space-y-4">
-            <div className="grid grid-cols-4 gap-4">
-              <div className="col-span-4 md:col-span-1">
-                <p className="mb-2 text-sm font-medium">Формат вывода:</p>
-                <div className="flex flex-row flex-wrap gap-2 md:flex-col">
-                  {["text", "srt", "vtt", "json"].map((format) => (
-                    <Button
-                      key={format}
-                      variant={selectedFormat === format ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => handleFormatChange(format)}
-                      className="flex-1 md:flex-none"
-                      disabled={isProcessing}
-                    >
-                      {format.toUpperCase()}
-                    </Button>
-                  ))}
-                </div>
-              </div>
-              <div className="col-span-4 md:col-span-3">
-                <Dropzone 
-                  onFileDrop={handleFileDrop} 
-                  className="h-full" 
-                />
-              </div>
+            <div className="col-span-4 w-full">
+              <Dropzone 
+                onFileDrop={handleFileDrop} 
+                className="h-full" 
+              />
             </div>
           </div>
         </TabsContent>
@@ -167,7 +144,7 @@ export default function TranscriptionSection() {
               <CardHeader>
                 <CardTitle>Результат транскрибирования</CardTitle>
                 <CardDescription>
-                  Формат: {result.format.toUpperCase()}
+                  Формат: TEXT
                 </CardDescription>
               </CardHeader>
               <CardContent>

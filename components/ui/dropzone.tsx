@@ -1,8 +1,8 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useCallback, useState, useEffect } from "react"
 import { useDropzone } from "react-dropzone"
-import { Upload, File, Check, Loader2 } from "lucide-react"
+import { Upload, Check, Loader2 } from "lucide-react"
 import { useTheme } from "next-themes"
 
 import { Card, CardContent } from "@/components/ui/card"
@@ -13,23 +13,23 @@ export type FileStatus = "idle" | "uploading" | "success" | "error"
 
 interface DropzoneProps {
   onFileDrop: (file: File) => Promise<void>
-  accept?: Record<string, string[]>
-  maxSize?: number
   className?: string
 }
 
 export function Dropzone({
   onFileDrop,
-  accept = {
-    "audio/*": [".mp3", ".wav", ".aac", ".flac", ".ogg", ".m4a"],
-  },
-  maxSize = 100 * 1024 * 1024, // 100MB
   className,
 }: DropzoneProps) {
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState<FileStatus>("idle")
   const [progress, setProgress] = useState(0)
-  const { theme } = useTheme()
+  const { theme, resolvedTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  // Добавляем эффект для установки mounted при монтировании на клиенте
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -66,8 +66,10 @@ export function Dropzone({
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
-    accept,
-    maxSize,
+    accept: {
+      "audio/*": [".mp3", ".wav", ".aac", ".flac", ".ogg", ".m4a"],
+    },
+    maxSize: 100 * 1024 * 1024, // 100MB
     multiple: false,
   })
 
@@ -81,7 +83,11 @@ export function Dropzone({
     if (isDragActive) return "border-primary/70 bg-primary/20"
     if (isUploading) return "border-yellow-500/70 bg-yellow-500/20"
     if (isSuccess) return "border-green-500/70 bg-green-500/20"
-    return theme === "dark" 
+
+    // Только применяем стили зависящие от темы, когда компонент смонтирован
+    if (!mounted) return "border-zinc-200 bg-white/80" // Дефолтный стиль для SSR
+    
+    return resolvedTheme === "dark" 
       ? "border-zinc-800 hover:border-primary/50 bg-zinc-800/50 hover:bg-zinc-800/70" 
       : "border-zinc-200 hover:border-primary/50 bg-white/80 hover:bg-white/90"
   }
@@ -92,6 +98,12 @@ export function Dropzone({
     if (isUploading) return "shadow-[0_0_15px_rgba(234,179,8,0.5)]"
     if (isSuccess) return "shadow-[0_0_15px_rgba(34,197,94,0.5)]"
     return ""
+  }
+
+  // Функция для форматирования размера файла
+  const formatFileSize = (size?: number) => {
+    if (size === undefined) return "Неизвестный размер"
+    return `${(size / (1024 * 1024)).toFixed(2)} МБ`
   }
 
   return (
@@ -127,7 +139,7 @@ export function Dropzone({
                   Перетащите аудиофайл сюда или нажмите для выбора
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Поддерживаются MP3, WAV, AAC, FLAC, OGG (до 100 МБ)
+                  MP3, WAV, AAC, FLAC, OGG, M4A
                 </p>
               </>
             )}
@@ -136,7 +148,7 @@ export function Dropzone({
               <>
                 <p className="text-lg font-medium">Загрузка файла...</p>
                 <p className="text-sm text-muted-foreground">
-                  {file?.name} ({(file?.size / (1024 * 1024)).toFixed(2)} МБ)
+                  {file?.name} ({formatFileSize(file?.size)})
                 </p>
               </>
             )}
@@ -145,7 +157,7 @@ export function Dropzone({
               <>
                 <p className="text-lg font-medium">Файл успешно загружен!</p>
                 <p className="text-sm text-muted-foreground">
-                  {file?.name} ({(file?.size / (1024 * 1024)).toFixed(2)} МБ)
+                  {file?.name} ({formatFileSize(file?.size)})
                 </p>
               </>
             )}

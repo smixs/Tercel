@@ -9,21 +9,12 @@ export async function POST(request: NextRequest) {
     
     const formData = await request.formData()
     const file = formData.get("file") as File | null
-    const format = (formData.get("format") as string) || "text"
+    const format = "text" // Всегда используем текстовый формат
     
     if (!file) {
       console.error("Файл не предоставлен")
       return NextResponse.json(
         { error: "Файл не предоставлен" },
-        { status: 400 }
-      )
-    }
-    
-    // Проверка формата
-    if (!["srt", "json", "text", "vtt"].includes(format)) {
-      console.error(`Неподдерживаемый формат: ${format}`)
-      return NextResponse.json(
-        { error: "Неподдерживаемый формат вывода" },
         { status: 400 }
       )
     }
@@ -59,13 +50,8 @@ export async function POST(request: NextRequest) {
       )
     }
     
-    // Обработка результата в зависимости от формата
-    let result
-    if (format === "json") {
-      result = await response.json()
-    } else {
-      result = await response.text()
-    }
+    // Для TEXT всегда получаем текстовый ответ
+    const result = await response.text()
     
     console.log("Транскрибирование успешно завершено")
     
