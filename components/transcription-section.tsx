@@ -37,6 +37,9 @@ export default function TranscriptionSection() {
       
       console.log(`Отправка файла ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} МБ), формат: ${selectedFormat}`)
       
+      // Небольшая задержка, чтобы показать состояние "transcribing"
+      await new Promise(resolve => setTimeout(resolve, 500))
+      
       // Отправляем запрос на API
       const response = await fetch("/api/transcribe", {
         method: "POST",

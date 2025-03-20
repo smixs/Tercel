@@ -7,8 +7,9 @@ import { Upload, Check, Loader2 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
+import { Alert } from "@/components/ui/alert"
 
-export type FileStatus = "idle" | "uploading" | "success" | "error"
+export type FileStatus = "idle" | "uploading" | "transcribing" | "success" | "error"
 
 interface DropzoneProps {
   onFileDrop: (file: File) => Promise<void>
@@ -37,20 +38,22 @@ export function Dropzone({
       setFile(selectedFile)
       setStatus("uploading")
       
-      // Simulate progress
+      // Загрузка файла с прогрессом от 0% до 100%
       const interval = setInterval(() => {
         setProgress((prev) => {
-          if (prev >= 95) {
+          if (prev >= 100) {
             clearInterval(interval)
-            return 95
+            // После полной загрузки переходим в состояние транскрибирования
+            setStatus("transcribing")
+            return 100
           }
-          return prev + 5
+          return Math.min(prev + 5, 100)
         })
-      }, 200)
+      }, 150)
 
       try {
         await onFileDrop(selectedFile)
-        setProgress(100)
+        // Не меняем статус здесь, т.к. он уже будет "transcribing"
         setStatus("success")
       } catch (error) {
         setStatus("error")
@@ -73,6 +76,7 @@ export function Dropzone({
 
   const isIdle = status === "idle"
   const isUploading = status === "uploading"
+  const isTranscribing = status === "transcribing"
   const isSuccess = status === "success"
   const isError = status === "error"
 
@@ -81,6 +85,7 @@ export function Dropzone({
     if (isDragReject || isError) return "animate-border-error"
     if (isDragActive) return "animate-border-drag"
     if (isUploading) return "animate-border-upload"
+    if (isTranscribing) return "animate-border-pulse"
     if (isSuccess) return "animate-border-success"
     return "animate-border-pulse"
   }
@@ -89,6 +94,20 @@ export function Dropzone({
   const formatFileSize = (size?: number) => {
     if (size === undefined) return "Неизвестный размер"
     return `${(size / (1024 * 1024)).toFixed(2)} МБ`
+  }
+
+  // Функция для оценки времени транскрибирования
+  const getEstimatedTime = (size?: number) => {
+    if (size === undefined) return "неизвестное время"
+    
+    // Очень приблизительная оценка: ~1 минута на час аудио формата mp3
+    // Для файла размером 10MB (примерно 1 час mp3) = 1 минута обработки
+    const sizeInMB = size / (1024 * 1024)
+    const estimatedMinutes = Math.max(1, Math.round(sizeInMB / 10))
+    
+    if (estimatedMinutes === 1) return "около минуты"
+    if (estimatedMinutes < 5) return `около ${estimatedMinutes} минут`
+    return `${estimatedMinutes}-${estimatedMinutes + 2} минут`
   }
 
   return (
@@ -114,6 +133,7 @@ export function Dropzone({
 
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border/30 bg-transparent">
               {isUploading && <Loader2 className="h-8 w-8 animate-spin text-primary" />}
+              {isTranscribing && <Loader2 className="h-8 w-8 animate-spin text-amber-500" />}
               {isSuccess && <Check className="h-8 w-8 text-green-500" />}
               {isError && <Upload className="h-8 w-8 text-red-500" />}
               {isIdle && <Upload className="h-8 w-8 text-primary" />}
@@ -140,9 +160,13 @@ export function Dropzone({
                 </>
               )}
 
+              {isTranscribing && (
+                <p className="text-lg font-medium">Идет транскрибирование...</p>
+              )}
+
               {isSuccess && (
                 <>
-                  <p className="text-lg font-medium">Файл успешно загружен!</p>
+                  <p className="text-lg font-medium">Транскрибирование завершено!</p>
                   <p className="text-sm text-muted-foreground">
                     {file?.name} ({formatFileSize(file?.size)})
                   </p>
@@ -151,7 +175,7 @@ export function Dropzone({
 
               {isError && (
                 <>
-                  <p className="text-lg font-medium">Ошибка загрузки</p>
+                  <p className="text-lg font-medium">Ошибка обработки</p>
                   <p className="text-sm text-muted-foreground">
                     Пожалуйста, попробуйте ещё раз
                   </p>
@@ -165,7 +189,7 @@ export function Dropzone({
           <div className="px-6 py-3">
             <Progress value={progress} className="h-2 w-full" />
             <p className="mt-2 text-xs text-muted-foreground">
-              Обработка: {progress}%
+              Загрузка: {progress}%
             </p>
           </div>
         )}
