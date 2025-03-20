@@ -1,8 +1,8 @@
-import { Indie_Flower } from 'next/font/google'
+import { Tektur } from 'next/font/google'
 
-export const indieFlower = Indie_Flower({
-  weight: '400',  // Indie Flower имеет только вес 400
+export const tektur = Tektur({
+  weight: '400',  // Tektur имеет только вес 400
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-indie-flower',
+  variable: '--font-Tektur',
 }) 

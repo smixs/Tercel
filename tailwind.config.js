@@ -6,7 +6,7 @@ module.exports = {
   theme: { 
     extend: { 
       fontFamily: {
-        sans: ['var(--font-cosmic-grotesk)'],
+        sans: ['var(--font)'],
       },
       keyframes: { 
         "star-movement-top": { 

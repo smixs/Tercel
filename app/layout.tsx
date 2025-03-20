@@ -1,7 +1,7 @@
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
-import { indieFlower } from "@/app/fonts";
+import { tektur } from "@/app/fonts";
 
 export const metadata = {
   title: "Hertzel",
@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" suppressHydrationWarning className={indieFlower.variable}>
+    <html lang="ru" suppressHydrationWarning className={tektur.variable}>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased"

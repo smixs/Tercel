@@ -31,9 +31,13 @@ export default function Home() {
         <ShinyText 
           text="Hertzel" 
           speed={3}
-          colorShift={true}
-          colorSpeed={12}
-          className="text-8xl font-bold md:text-9xl lg:text-9xl font-indie-flower opacity-40"
+          colorShift={false}
+          className="text-8xl font-bold md:text-9xl lg:text-9xl font-Tektur text-transparent"
+          style={{
+            backgroundImage: "linear-gradient(120deg, rgba(15,15,15,0.1) 40%, rgba(150,150,150,0.3) 50%, rgba(15,15,15,0.1) 60%)",
+            WebkitBackgroundClip: "text",
+            backgroundClip: "text"
+          }}
         />
       </h1>
       
