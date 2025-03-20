@@ -1,5 +1,6 @@
 import { Particles } from "@/components/ui/particles"
 import TranscriptionSection from "@/components/transcription-section"
+import { ShinyText } from "@/components/ui/shiny-text"
 
 export default function Home() {
   return (
@@ -7,10 +8,11 @@ export default function Home() {
       <Particles className="absolute inset-0" quantity={150} ease={50} size={1.2} />
       
       <h1 className="relative z-10 mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
-        <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          Tercel
-        </span>
-        <span className="ml-2 font-light">Транскрипция</span>
+        <ShinyText 
+          text="Tercel" 
+          speed={3} 
+          className="text-4xl font-bold md:text-5xl lg:text-6xl"
+        />
       </h1>
       
       <div className="z-10 w-full max-w-2xl">
@@ -18,7 +20,7 @@ export default function Home() {
       </div>
       
       <footer className="absolute bottom-4 text-sm text-muted-foreground">
-        © 2023 Tercel. Все права защищены.
+        © 2025 Tercel
       </footer>
     </main>
   )
