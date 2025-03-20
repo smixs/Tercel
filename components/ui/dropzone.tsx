@@ -105,7 +105,7 @@ export function Dropzone({
           <div
             {...getRootProps({
               className: cn(
-                "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-6 transition-all duration-200 bg-transparent relative",
+                "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-transparent p-6 transition-all duration-200 bg-transparent relative",
                 getGlowClass()
               ),
             })}
