@@ -157,25 +157,33 @@
 }
 
 .animate-shine {
-  animation: shine 5s linear infinite;
+  animation-name: shine;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
-/* Анимации для свечения дропзоны - только box-shadow, без видимой рамки */
+/* Анимации для рамки дропзоны - упрощенные и надежные */
 @keyframes colorPulse {
   0% {
-    box-shadow: 0 0 20px 5px hsla(220, 70%, 75%, 0.7);
+    border-color: hsla(220, 60%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(220, 60%, 75%, 0.7);
   }
   25% {
-    box-shadow: 0 0 30px 8px hsla(260, 80%, 80%, 0.8);
+    border-color: hsla(260, 70%, 80%, 0.8);
+    box-shadow: 0 0 25px 5px hsla(260, 70%, 80%, 0.8);
   }
   50% {
-    box-shadow: 0 0 40px 10px hsla(300, 70%, 85%, 0.7);
+    border-color: hsla(300, 60%, 85%, 0.7);
+    box-shadow: 0 0 30px 5px hsla(300, 60%, 85%, 0.7);
   }
   75% {
-    box-shadow: 0 0 30px 8px hsla(340, 80%, 80%, 0.8);
+    border-color: hsla(340, 70%, 80%, 0.8);
+    box-shadow: 0 0 25px 5px hsla(340, 70%, 80%, 0.8);
   }
   100% {
-    box-shadow: 0 0 20px 5px hsla(220, 70%, 75%, 0.7);
+    border-color: hsla(220, 60%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(220, 60%, 75%, 0.7);
   }
 }
 
@@ -185,13 +193,16 @@
 
 @keyframes dragPulse {
   0% {
-    box-shadow: 0 0 25px 5px hsla(280, 80%, 75%, 0.7);
+    border-color: hsla(280, 70%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(280, 70%, 75%, 0.7);
   }
   50% {
-    box-shadow: 0 0 40px 12px hsla(300, 90%, 80%, 0.9);
+    border-color: hsla(300, 80%, 80%, 0.9);
+    box-shadow: 0 0 35px 5px hsla(300, 80%, 80%, 0.9);
   }
   100% {
-    box-shadow: 0 0 25px 5px hsla(280, 80%, 75%, 0.7);
+    border-color: hsla(280, 70%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(280, 70%, 75%, 0.7);
   }
 }
 
@@ -201,13 +212,16 @@
 
 @keyframes uploadPulse {
   0% {
-    box-shadow: 0 0 25px 5px hsla(40, 100%, 75%, 0.7);
+    border-color: hsla(40, 90%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(40, 90%, 75%, 0.7);
   }
   50% {
-    box-shadow: 0 0 40px 12px hsla(50, 100%, 80%, 0.9);
+    border-color: hsla(50, 90%, 80%, 0.9);
+    box-shadow: 0 0 35px 5px hsla(50, 90%, 80%, 0.9);
   }
   100% {
-    box-shadow: 0 0 25px 5px hsla(40, 100%, 75%, 0.7);
+    border-color: hsla(40, 90%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(40, 90%, 75%, 0.7);
   }
 }
 
@@ -217,13 +231,16 @@
 
 @keyframes successPulse {
   0% {
-    box-shadow: 0 0 25px 5px hsla(120, 70%, 75%, 0.7);
+    border-color: hsla(120, 60%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(120, 60%, 75%, 0.7);
   }
   50% {
-    box-shadow: 0 0 40px 12px hsla(140, 80%, 80%, 0.9);
+    border-color: hsla(140, 70%, 80%, 0.9);
+    box-shadow: 0 0 35px 5px hsla(140, 70%, 80%, 0.9);
   }
   100% {
-    box-shadow: 0 0 25px 5px hsla(120, 70%, 75%, 0.7);
+    border-color: hsla(120, 60%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(120, 60%, 75%, 0.7);
   }
 }
 
@@ -233,16 +250,109 @@
 
 @keyframes errorPulse {
   0% {
-    box-shadow: 0 0 25px 5px hsla(0, 90%, 75%, 0.7);
+    border-color: hsla(0, 80%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(0, 80%, 75%, 0.7);
   }
   50% {
-    box-shadow: 0 0 40px 12px hsla(10, 100%, 80%, 0.9);
+    border-color: hsla(10, 90%, 80%, 0.9);
+    box-shadow: 0 0 35px 5px hsla(10, 90%, 80%, 0.9);
   }
   100% {
-    box-shadow: 0 0 25px 5px hsla(0, 90%, 75%, 0.7);
+    border-color: hsla(0, 80%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(0, 80%, 75%, 0.7);
   }
 }
 
 .animate-border-error {
   animation: errorPulse 2s ease infinite;
+}
+
+.animate-text-color {
+  /* Используем прямое объявление свойств вместо shorthand animation-name */
+  /* animation-name: textColorPulse;
+  animation-duration: 12s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite; */
+  
+  /* При использовании прямого задания в компоненте эти свойства не нужны */
+}
+
+@keyframes textColorPulse {
+  0% {
+    background-image: linear-gradient(120deg, 
+      hsla(220, 40%, 65%, 0.9) 40%,
+      hsla(220, 70%, 90%, 0.95) 50%,
+      hsla(220, 40%, 65%, 0.9) 60%
+    );
+  }
+  10% {
+    background-image: linear-gradient(120deg, 
+      hsla(230, 42%, 67%, 0.9) 40%,
+      hsla(230, 70%, 90%, 0.95) 50%,
+      hsla(230, 42%, 67%, 0.9) 60%
+    );
+  }
+  20% {
+    background-image: linear-gradient(120deg, 
+      hsla(245, 45%, 68%, 0.9) 40%,
+      hsla(245, 70%, 90%, 0.95) 50%,
+      hsla(245, 45%, 68%, 0.9) 60%
+    );
+  }
+  30% {
+    background-image: linear-gradient(120deg, 
+      hsla(260, 50%, 70%, 0.9) 40%,
+      hsla(260, 70%, 90%, 0.95) 50%,
+      hsla(260, 50%, 70%, 0.9) 60%
+    );
+  }
+  40% {
+    background-image: linear-gradient(120deg, 
+      hsla(280, 45%, 68%, 0.9) 40%,
+      hsla(280, 70%, 90%, 0.95) 50%,
+      hsla(280, 45%, 68%, 0.9) 60%
+    );
+  }
+  50% {
+    background-image: linear-gradient(120deg, 
+      hsla(300, 40%, 70%, 0.9) 40%,
+      hsla(300, 70%, 90%, 0.95) 50%,
+      hsla(300, 40%, 70%, 0.9) 60%
+    );
+  }
+  60% {
+    background-image: linear-gradient(120deg, 
+      hsla(320, 45%, 68%, 0.9) 40%,
+      hsla(320, 70%, 90%, 0.95) 50%,
+      hsla(320, 45%, 68%, 0.9) 60%
+    );
+  }
+  70% {
+    background-image: linear-gradient(120deg, 
+      hsla(340, 50%, 70%, 0.9) 40%,
+      hsla(340, 70%, 90%, 0.95) 50%,
+      hsla(340, 50%, 70%, 0.9) 60%
+    );
+  }
+  80% {
+    background-image: linear-gradient(120deg, 
+      hsla(360, 45%, 68%, 0.9) 40%,
+      hsla(360, 70%, 90%, 0.95) 50%,
+      hsla(360, 45%, 68%, 0.9) 60%
+    );
+  }
+  90% {
+    background-image: linear-gradient(120deg, 
+      hsla(380, 42%, 67%, 0.9) 40%,
+      hsla(380, 70%, 90%, 0.95) 50%,
+      hsla(380, 42%, 67%, 0.9) 60%
+    );
+  }
+  100% {
+    background-image: linear-gradient(120deg, 
+      hsla(220, 40%, 65%, 0.9) 40%,
+      hsla(220, 70%, 90%, 0.95) 50%,
+      hsla(220, 40%, 65%, 0.9) 60%
+    );
+  }
 }
