@@ -7,7 +7,6 @@ import { Upload, Check, Loader2 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
-import { Alert } from "@/components/ui/alert"
 
 export type FileStatus = "idle" | "uploading" | "transcribing" | "success" | "error"
 
@@ -23,12 +22,6 @@ export function Dropzone({
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState<FileStatus>("idle")
   const [progress, setProgress] = useState(0)
-  const [mounted, setMounted] = useState(false)
-
-  // Добавляем эффект для установки mounted при монтировании на клиенте
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -94,20 +87,6 @@ export function Dropzone({
   const formatFileSize = (size?: number) => {
     if (size === undefined) return "Неизвестный размер"
     return `${(size / (1024 * 1024)).toFixed(2)} МБ`
-  }
-
-  // Функция для оценки времени транскрибирования
-  const getEstimatedTime = (size?: number) => {
-    if (size === undefined) return "неизвестное время"
-    
-    // Очень приблизительная оценка: ~1 минута на час аудио формата mp3
-    // Для файла размером 10MB (примерно 1 час mp3) = 1 минута обработки
-    const sizeInMB = size / (1024 * 1024)
-    const estimatedMinutes = Math.max(1, Math.round(sizeInMB / 10))
-    
-    if (estimatedMinutes === 1) return "около минуты"
-    if (estimatedMinutes < 5) return `около ${estimatedMinutes} минут`
-    return `${estimatedMinutes}-${estimatedMinutes + 2} минут`
   }
 
   return (

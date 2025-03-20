@@ -25,8 +25,6 @@ export type GlowEffectProps = {
   transition?: Transition;
   scale?: number;
   duration?: number;
-  borderOnly?: boolean;
-  borderWidth?: number;
   opacity?: number;
 };
 
@@ -39,8 +37,6 @@ export function GlowEffect({
   transition,
   scale = 1,
   duration = 5,
-  borderOnly = false,
-  borderWidth = 2,
   opacity = 1,
 }: GlowEffectProps) {
   const BASE_TRANSITION = {

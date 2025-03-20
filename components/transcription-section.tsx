@@ -28,7 +28,7 @@ export default function TranscriptionSection({
   onTranscriptionEnd 
 }: TranscriptionSectionProps) {
   const [result, setResult] = useState<TranscriptionResult | null>(null)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [, setIsProcessing] = useState(false)
   const [selectedFormat] = useState<"srt" | "json" | "text" | "vtt">("text")
   const [activeTab, setActiveTab] = useState("upload")
   const [error, setError] = useState<string | null>(null)
