@@ -6,6 +6,7 @@ import { Upload, Check, Loader2 } from "lucide-react"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { GlowEffect } from "@/components/ui/glow-effect"
 import { cn } from "@/lib/utils"
 
 export type FileStatus = "idle" | "uploading" | "success" | "error"
@@ -94,6 +95,15 @@ export function Dropzone({
     return ""
   }
 
+  // Функция для получения цветов свечения в зависимости от состояния
+  const getGlowEffectColors = () => {
+    if (isDragReject || isError) return ['#EF4444', '#F87171', '#FCA5A5']
+    if (isDragActive) return ['#9333EA', '#A855F7', '#C084FC']
+    if (isUploading) return ['#EAB308', '#FACC15', '#FEF08A']
+    if (isSuccess) return ['#22C55E', '#4ADE80', '#86EFAC']
+    return ['#4F46E5', '#6366F1', '#818CF8', '#A5B4FC']
+  }
+
   // Функция для форматирования размера файла
   const formatFileSize = (size?: number) => {
     if (size === undefined) return "Неизвестный размер"
@@ -103,67 +113,85 @@ export function Dropzone({
   return (
     <Card
       className={cn(
-        "relative w-full max-w-2xl overflow-hidden transition-all duration-300 bg-transparent border-border/30",
-        getGlowColor(),
+        "relative w-full max-w-2xl overflow-hidden transition-all duration-300 bg-transparent border-none",
         className
       )}
     >
       <CardContent className="p-0">
-        <div
-          {...getRootProps({
-            className: cn(
-              "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-6 transition-all duration-200 bg-transparent",
-              getStatusColor()
-            ),
-          })}
-        >
-          <input {...getInputProps()} />
+        <div className="relative">
+          {/* Основной контент дропзоны */}
+          <div
+            {...getRootProps({
+              className: cn(
+                "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg p-6 transition-all duration-200 bg-transparent relative z-10",
+                // Убираем border-dashed, так как теперь рамку создаем с помощью псевдоэлементов
+              ),
+            })}
+          >
+            {/* Светящаяся рамка с помощью псевдоэлементов вместо GlowEffect */}
+            <div 
+              className={cn(
+                "absolute inset-0 rounded-lg z-0 border-2 border-dashed",
+                isDragReject || isError 
+                  ? "animate-border-error" 
+                  : isDragActive 
+                    ? "animate-border-drag" 
+                    : isUploading 
+                      ? "animate-border-upload" 
+                      : isSuccess 
+                        ? "animate-border-success" 
+                        : "animate-border-pulse"
+              )}
+            />
+            
+            <input {...getInputProps()} />
 
-          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border/30 bg-transparent">
-            {isUploading && <Loader2 className="h-8 w-8 animate-spin text-primary" />}
-            {isSuccess && <Check className="h-8 w-8 text-green-500" />}
-            {isError && <Upload className="h-8 w-8 text-red-500" />}
-            {isIdle && <Upload className="h-8 w-8 text-primary" />}
-          </div>
+            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border/30 bg-transparent">
+              {isUploading && <Loader2 className="h-8 w-8 animate-spin text-primary" />}
+              {isSuccess && <Check className="h-8 w-8 text-green-500" />}
+              {isError && <Upload className="h-8 w-8 text-red-500" />}
+              {isIdle && <Upload className="h-8 w-8 text-primary" />}
+            </div>
 
-          <div className="flex flex-col items-center gap-1 text-center">
-            {isIdle && (
-              <>
-                <p className="text-lg font-medium">
-                  Перетащите аудиофайл сюда или нажмите для выбора
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  MP3, WAV, AAC, FLAC, OGG, M4A
-                </p>
-              </>
-            )}
+            <div className="flex flex-col items-center gap-1 text-center">
+              {isIdle && (
+                <>
+                  <p className="text-lg font-medium">
+                    Перетащите аудиофайл сюда или нажмите для выбора
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    MP3, WAV, AAC, FLAC, OGG, M4A
+                  </p>
+                </>
+              )}
 
-            {isUploading && (
-              <>
-                <p className="text-lg font-medium">Загрузка файла...</p>
-                <p className="text-sm text-muted-foreground">
-                  {file?.name} ({formatFileSize(file?.size)})
-                </p>
-              </>
-            )}
+              {isUploading && (
+                <>
+                  <p className="text-lg font-medium">Загрузка файла...</p>
+                  <p className="text-sm text-muted-foreground">
+                    {file?.name} ({formatFileSize(file?.size)})
+                  </p>
+                </>
+              )}
 
-            {isSuccess && (
-              <>
-                <p className="text-lg font-medium">Файл успешно загружен!</p>
-                <p className="text-sm text-muted-foreground">
-                  {file?.name} ({formatFileSize(file?.size)})
-                </p>
-              </>
-            )}
+              {isSuccess && (
+                <>
+                  <p className="text-lg font-medium">Файл успешно загружен!</p>
+                  <p className="text-sm text-muted-foreground">
+                    {file?.name} ({formatFileSize(file?.size)})
+                  </p>
+                </>
+              )}
 
-            {isError && (
-              <>
-                <p className="text-lg font-medium">Ошибка загрузки</p>
-                <p className="text-sm text-muted-foreground">
-                  Пожалуйста, попробуйте ещё раз
-                </p>
-              </>
-            )}
+              {isError && (
+                <>
+                  <p className="text-lg font-medium">Ошибка загрузки</p>
+                  <p className="text-sm text-muted-foreground">
+                    Пожалуйста, попробуйте ещё раз
+                  </p>
+                </>
+              )}
+            </div>
           </div>
         </div>
 

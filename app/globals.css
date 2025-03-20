@@ -159,3 +159,107 @@
 .animate-shine {
   animation: shine 5s linear infinite;
 }
+
+/* Анимации для рамки дропзоны */
+@keyframes colorPulse {
+  0% {
+    border-color: rgba(79, 70, 229, 0.5);
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+  }
+  25% {
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+  }
+  50% {
+    border-color: rgba(129, 140, 248, 0.5);
+    box-shadow: 0 0 25px rgba(129, 140, 248, 0.5);
+  }
+  75% {
+    border-color: rgba(165, 180, 252, 0.5);
+    box-shadow: 0 0 20px rgba(165, 180, 252, 0.5);
+  }
+  100% {
+    border-color: rgba(79, 70, 229, 0.5);
+    box-shadow: 0 0 15px rgba(79, 70, 229, 0.5);
+  }
+}
+
+.animate-border-pulse {
+  animation: colorPulse 8s ease infinite;
+}
+
+@keyframes dragPulse {
+  0% {
+    border-color: rgba(147, 51, 234, 0.4);
+    box-shadow: 0 0 15px rgba(147, 51, 234, 0.4);
+  }
+  50% {
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+  }
+  100% {
+    border-color: rgba(147, 51, 234, 0.4);
+    box-shadow: 0 0 15px rgba(147, 51, 234, 0.4);
+  }
+}
+
+.animate-border-drag {
+  animation: dragPulse 2s ease infinite;
+}
+
+@keyframes uploadPulse {
+  0% {
+    border-color: rgba(234, 179, 8, 0.4);
+    box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+  }
+  50% {
+    border-color: rgba(250, 204, 21, 0.6);
+    box-shadow: 0 0 25px rgba(250, 204, 21, 0.6);
+  }
+  100% {
+    border-color: rgba(234, 179, 8, 0.4);
+    box-shadow: 0 0 15px rgba(234, 179, 8, 0.4);
+  }
+}
+
+.animate-border-upload {
+  animation: uploadPulse 3s ease infinite;
+}
+
+@keyframes successPulse {
+  0% {
+    border-color: rgba(34, 197, 94, 0.4);
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+  }
+  50% {
+    border-color: rgba(74, 222, 128, 0.6);
+    box-shadow: 0 0 25px rgba(74, 222, 128, 0.6);
+  }
+  100% {
+    border-color: rgba(34, 197, 94, 0.4);
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+  }
+}
+
+.animate-border-success {
+  animation: successPulse 4s ease infinite;
+}
+
+@keyframes errorPulse {
+  0% {
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  }
+  50% {
+    border-color: rgba(248, 113, 113, 0.6);
+    box-shadow: 0 0 25px rgba(248, 113, 113, 0.6);
+  }
+  100% {
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.animate-border-error {
+  animation: errorPulse 2s ease infinite;
+}
