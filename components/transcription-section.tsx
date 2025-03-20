@@ -148,7 +148,7 @@ export default function TranscriptionSection() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <pre className="h-60 overflow-auto rounded-md bg-muted p-4 text-sm">
+                <pre className="min-h-[200px] max-h-[500px] md:max-h-[600px] h-auto overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-4 text-sm transition-all">
                   {formatResultText(result.text, result.format)}
                 </pre>
               </CardContent>
