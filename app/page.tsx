@@ -34,7 +34,7 @@ export default function Home() {
           colorShift={false}
           className="text-8xl font-bold md:text-9xl lg:text-9xl font-Tektur text-transparent"
           style={{
-            backgroundImage: "linear-gradient(120deg, rgba(15,15,15,0.1) 40%, rgba(150,150,150,0.3) 50%, rgba(15,15,15,0.1) 60%)",
+            backgroundImage: "linear-gradient(120deg, rgba(15,15,15,0.1) 40%, rgba(220,220,220,0.5) 50%, rgba(15,15,15,0.1) 60%)",
             WebkitBackgroundClip: "text",
             backgroundClip: "text"
           }}
