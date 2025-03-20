@@ -103,7 +103,7 @@ export function Dropzone({
   return (
     <Card
       className={cn(
-        "relative w-full max-w-2xl overflow-hidden transition-all duration-300 bg-transparent backdrop-blur-sm",
+        "relative w-full max-w-2xl overflow-hidden transition-all duration-300 bg-transparent border-border/30",
         getGlowColor(),
         className
       )}
@@ -112,14 +112,14 @@ export function Dropzone({
         <div
           {...getRootProps({
             className: cn(
-              "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-6 transition-all duration-200 bg-transparent backdrop-blur-[2px]",
+              "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-6 transition-all duration-200 bg-transparent",
               getStatusColor()
             ),
           })}
         >
           <input {...getInputProps()} />
 
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-background/10 backdrop-blur-md">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border/30 bg-transparent">
             {isUploading && <Loader2 className="h-8 w-8 animate-spin text-primary" />}
             {isSuccess && <Check className="h-8 w-8 text-green-500" />}
             {isError && <Upload className="h-8 w-8 text-red-500" />}
