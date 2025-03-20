@@ -160,27 +160,27 @@
   animation: shine 5s linear infinite;
 }
 
-/* Анимации для рамки дропзоны */
+/* Анимации для рамки дропзоны - упрощенные и надежные */
 @keyframes colorPulse {
   0% {
-    border-color: hsla(220, 20%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(220, 20%, 80%, 0.3);
+    border-color: hsla(220, 60%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(220, 60%, 75%, 0.7);
   }
   25% {
-    border-color: hsla(260, 15%, 85%, 0.4);
-    box-shadow: 0 0 20px hsla(260, 15%, 85%, 0.4);
+    border-color: hsla(260, 70%, 80%, 0.8);
+    box-shadow: 0 0 25px 5px hsla(260, 70%, 80%, 0.8);
   }
   50% {
-    border-color: hsla(300, 10%, 90%, 0.3);
-    box-shadow: 0 0 25px hsla(300, 10%, 90%, 0.3);
+    border-color: hsla(300, 60%, 85%, 0.7);
+    box-shadow: 0 0 30px 5px hsla(300, 60%, 85%, 0.7);
   }
   75% {
-    border-color: hsla(340, 15%, 85%, 0.4);
-    box-shadow: 0 0 20px hsla(340, 15%, 85%, 0.4);
+    border-color: hsla(340, 70%, 80%, 0.8);
+    box-shadow: 0 0 25px 5px hsla(340, 70%, 80%, 0.8);
   }
   100% {
-    border-color: hsla(220, 20%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(220, 20%, 80%, 0.3);
+    border-color: hsla(220, 60%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(220, 60%, 75%, 0.7);
   }
 }
 
@@ -190,16 +190,16 @@
 
 @keyframes dragPulse {
   0% {
-    border-color: hsla(280, 30%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(280, 30%, 80%, 0.3);
+    border-color: hsla(280, 70%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(280, 70%, 75%, 0.7);
   }
   50% {
-    border-color: hsla(300, 35%, 85%, 0.5);
-    box-shadow: 0 0 25px hsla(300, 35%, 85%, 0.5);
+    border-color: hsla(300, 80%, 80%, 0.9);
+    box-shadow: 0 0 35px 5px hsla(300, 80%, 80%, 0.9);
   }
   100% {
-    border-color: hsla(280, 30%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(280, 30%, 80%, 0.3);
+    border-color: hsla(280, 70%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(280, 70%, 75%, 0.7);
   }
 }
 
@@ -209,16 +209,16 @@
 
 @keyframes uploadPulse {
   0% {
-    border-color: hsla(40, 30%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(40, 30%, 80%, 0.3);
+    border-color: hsla(40, 90%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(40, 90%, 75%, 0.7);
   }
   50% {
-    border-color: hsla(50, 35%, 85%, 0.5);
-    box-shadow: 0 0 25px hsla(50, 35%, 85%, 0.5);
+    border-color: hsla(50, 90%, 80%, 0.9);
+    box-shadow: 0 0 35px 5px hsla(50, 90%, 80%, 0.9);
   }
   100% {
-    border-color: hsla(40, 30%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(40, 30%, 80%, 0.3);
+    border-color: hsla(40, 90%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(40, 90%, 75%, 0.7);
   }
 }
 
@@ -228,16 +228,16 @@
 
 @keyframes successPulse {
   0% {
-    border-color: hsla(120, 20%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(120, 20%, 80%, 0.3);
+    border-color: hsla(120, 60%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(120, 60%, 75%, 0.7);
   }
   50% {
-    border-color: hsla(140, 25%, 85%, 0.5);
-    box-shadow: 0 0 25px hsla(140, 25%, 85%, 0.5);
+    border-color: hsla(140, 70%, 80%, 0.9);
+    box-shadow: 0 0 35px 5px hsla(140, 70%, 80%, 0.9);
   }
   100% {
-    border-color: hsla(120, 20%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(120, 20%, 80%, 0.3);
+    border-color: hsla(120, 60%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(120, 60%, 75%, 0.7);
   }
 }
 
@@ -247,16 +247,16 @@
 
 @keyframes errorPulse {
   0% {
-    border-color: hsla(0, 25%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(0, 25%, 80%, 0.3);
+    border-color: hsla(0, 80%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(0, 80%, 75%, 0.7);
   }
   50% {
-    border-color: hsla(10, 30%, 85%, 0.5);
-    box-shadow: 0 0 25px hsla(10, 30%, 85%, 0.5);
+    border-color: hsla(10, 90%, 80%, 0.9);
+    box-shadow: 0 0 35px 5px hsla(10, 90%, 80%, 0.9);
   }
   100% {
-    border-color: hsla(0, 25%, 80%, 0.3);
-    box-shadow: 0 0 15px hsla(0, 25%, 80%, 0.3);
+    border-color: hsla(0, 80%, 75%, 0.7);
+    box-shadow: 0 0 20px 5px hsla(0, 80%, 75%, 0.7);
   }
 }
 

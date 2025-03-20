@@ -6,7 +6,6 @@ import { Upload, Check, Loader2 } from "lucide-react"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { GlowEffect } from "@/components/ui/glow-effect"
 import { cn } from "@/lib/utils"
 
 export type FileStatus = "idle" | "uploading" | "success" | "error"
@@ -77,31 +76,13 @@ export function Dropzone({
   const isSuccess = status === "success"
   const isError = status === "error"
 
-  const getStatusColor = () => {
-    if (isDragReject || isError) return "border-red-500"
-    if (isDragActive) return "border-primary/70"
-    if (isUploading) return "border-yellow-500/70"
-    if (isSuccess) return "border-green-500/70"
-    
-    // Прозрачный фон с сохранением границы
-    return "border-zinc-800/50 hover:border-primary/50"
-  }
-
-  const getGlowColor = () => {
-    if (isDragReject || isError) return "shadow-[0_0_15px_rgba(239,68,68,0.5)]"
-    if (isDragActive) return "shadow-[0_0_15px_rgba(147,51,234,0.5)]"
-    if (isUploading) return "shadow-[0_0_15px_rgba(234,179,8,0.5)]"
-    if (isSuccess) return "shadow-[0_0_15px_rgba(34,197,94,0.5)]"
-    return ""
-  }
-
-  // Функция для получения цветов свечения в зависимости от состояния
-  const getGlowEffectColors = () => {
-    if (isDragReject || isError) return ['#EF4444', '#F87171', '#FCA5A5']
-    if (isDragActive) return ['#9333EA', '#A855F7', '#C084FC']
-    if (isUploading) return ['#EAB308', '#FACC15', '#FEF08A']
-    if (isSuccess) return ['#22C55E', '#4ADE80', '#86EFAC']
-    return ['#4F46E5', '#6366F1', '#818CF8', '#A5B4FC']
+  // Функция для получения класса свечения рамки в зависимости от состояния
+  const getGlowClass = () => {
+    if (isDragReject || isError) return "animate-border-error"
+    if (isDragActive) return "animate-border-drag"
+    if (isUploading) return "animate-border-upload"
+    if (isSuccess) return "animate-border-success"
+    return "animate-border-pulse"
   }
 
   // Функция для форматирования размера файла
@@ -113,37 +94,22 @@ export function Dropzone({
   return (
     <Card
       className={cn(
-        "relative w-full max-w-2xl overflow-hidden transition-all duration-300 bg-transparent border-none",
+        "relative w-full max-w-2xl overflow-visible transition-all duration-300 bg-transparent border-none",
         className
       )}
     >
       <CardContent className="p-0">
-        <div className="relative">
-          {/* Основной контент дропзоны */}
+        {/* Контейнер с видимым overflow для свечения */}
+        <div className="relative overflow-visible">
+          {/* Дропзона с рамкой */}
           <div
             {...getRootProps({
               className: cn(
-                "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg p-6 transition-all duration-200 bg-transparent relative z-10",
-                // Убираем border-dashed, так как теперь рамку создаем с помощью псевдоэлементов
+                "flex h-60 cursor-pointer flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed p-6 transition-all duration-200 bg-transparent relative",
+                getGlowClass()
               ),
             })}
           >
-            {/* Светящаяся рамка с помощью псевдоэлементов вместо GlowEffect */}
-            <div 
-              className={cn(
-                "absolute inset-0 rounded-lg z-0 border-2 border-dashed",
-                isDragReject || isError 
-                  ? "animate-border-error" 
-                  : isDragActive 
-                    ? "animate-border-drag" 
-                    : isUploading 
-                      ? "animate-border-upload" 
-                      : isSuccess 
-                        ? "animate-border-success" 
-                        : "animate-border-pulse"
-              )}
-            />
-            
             <input {...getInputProps()} />
 
             <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border/30 bg-transparent">
@@ -206,4 +172,4 @@ export function Dropzone({
       </CardContent>
     </Card>
   )
-} 
+}
