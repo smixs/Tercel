@@ -1,8 +1,8 @@
-import { Audiowide } from 'next/font/google'
+import { Indie_Flower } from 'next/font/google'
 
-export const audiowide = Audiowide({
-  weight: '400',  // Audiowide имеет только вес 400
+export const indieFlower = Indie_Flower({
+  weight: '400',  // Indie Flower имеет только вес 400
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-audiowide',
+  variable: '--font-indie-flower',
 }) 

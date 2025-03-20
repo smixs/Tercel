@@ -358,16 +358,11 @@
   }
 }
 
-.font-audiowide {
-  font-family: var(--font-audiowide);
+.font-indie-flower {
+  font-family: var(--font-indie-flower);
 }
 
 /* Сначала идут директивы Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Затем идет правило для шрифта Audiowide */
-.font-audiowide {
-  font-family: var(--font-audiowide);
-}

@@ -29,11 +29,11 @@ export default function Home() {
       
       <h1 className="relative z-10 mb-8 text-center">
         <ShinyText 
-          text="TERCELO" 
+          text="Hertzel" 
           speed={3}
           colorShift={true}
           colorSpeed={12}
-          className="text-4xl font-bold md:text-5xl lg:text-6xl font-audiowide"
+          className="text-8xl font-bold md:text-9xl lg:text-9xl font-indie-flower opacity-40"
         />
       </h1>
       
@@ -45,7 +45,7 @@ export default function Home() {
       </div>
       
       <footer className="absolute bottom-4 text-sm text-muted-foreground">
-        © 2025 TERCELO
+        © 2025 Hertzel
       </footer>
     </main>
   )
