@@ -315,6 +315,9 @@ const InfinityEffect = ({
           p.color = '#FFFFFF';
         }
         
+        // Проверка, чтобы радиус не был отрицательным
+        finalSize = Math.max(0.1, finalSize);
+        
         // Отрисовка частицы
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, finalSize, 0, TWO_PI);
