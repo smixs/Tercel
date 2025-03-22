@@ -119,7 +119,7 @@ export function Dropzone({
             </div>
 
             <div className="flex flex-col items-center gap-1 text-center">
-              {isIdle && (
+              {/* {isIdle && (
                 <>
                   <p className="text-lg font-medium">
                     Кидай сюда или нажми
@@ -128,7 +128,7 @@ export function Dropzone({
                     MP3, WAV, AAC, FLAC, OGG, M4A
                   </p>
                 </>
-              )}
+              )} */}
 
               {isUploading && (
                 <>
