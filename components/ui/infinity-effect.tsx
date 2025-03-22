@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from "@/lib/utils";
 
 interface InfinityEffectProps {
@@ -28,6 +28,7 @@ const InfinityEffect = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);
+  const animationTimeRef = useRef(0);
   
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -89,6 +90,35 @@ const InfinityEffect = ({
     // Нейтральная позиция курсора (вне экрана)
     const neutralPosition = { x: 9999, y: 9999 };
     let mouse = { ...neutralPosition };
+    
+    // Цвета для анимации, соответствующие анимации colorPulse
+    const animationColors = [
+      'hsla(0, 80%, 65%, 0.9)',     // Красный
+      'hsla(40, 90%, 60%, 0.95)',   // Оранжевый  
+      'hsla(60, 100%, 65%, 0.95)',  // Желтый
+      'hsla(120, 90%, 55%, 0.95)',  // Зеленый
+      'hsla(200, 90%, 60%, 0.95)',  // Голубой
+      'hsla(260, 85%, 65%, 0.95)',  // Синий
+      'hsla(0, 80%, 65%, 0.9)'      // Красный (повтор)
+    ];
+    
+    // Функция для получения текущего цвета из анимации
+    const getAnimationColor = (time: number) => {
+      // 12 секунд - это длительность анимации colorPulse
+      const animationDuration = 12000; 
+      const normalizedTime = (time % animationDuration) / animationDuration;
+      
+      // Определяем, между какими двумя ключевыми кадрами находимся
+      const numKeyframes = animationColors.length;
+      const keyframeProgress = normalizedTime * (numKeyframes - 1);
+      const keyframeIndex = Math.floor(keyframeProgress);
+      const mix = keyframeProgress - keyframeIndex;
+      
+      // Не выходим за пределы массива
+      const nextIndex = Math.min(keyframeIndex + 1, animationColors.length - 1);
+      
+      return animationColors[keyframeIndex];
+    };
     
     // Создание частиц с уменьшенной скоростью движения
     const particles: Particle[] = [];
@@ -209,6 +239,9 @@ const InfinityEffect = ({
       const deltaTime = lastTime ? (currentTime - lastTime) : 16;
       lastTime = currentTime;
       
+      // Обновляем время анимации для смены цветов
+      animationTimeRef.current = currentTime;
+      
       // Проверка долгого нажатия для мобильных устройств
       checkLongPress();
       
@@ -270,13 +303,13 @@ const InfinityEffect = ({
         const scaleVal = Math.sin(Math.PI * p.lifeProgress);
         let finalSize = p.size * scaleVal * 2;
         
-        // Увеличение размера возле курсора и изменение цвета на желтый
+        // Увеличение размера возле курсора и изменение цвета согласно анимации colorPulse
         if (distToMouse < mouseEffectRadius) {
-          const enlargeFactor = (1 + 3 * ((mouseEffectRadius - distToMouse) / mouseEffectRadius)) / 2; // Уменьшаем увеличение при наведении в 3 раза
+          const enlargeFactor = (1 + 3 * ((mouseEffectRadius - distToMouse) / mouseEffectRadius)) / 2;
           finalSize *= enlargeFactor;
           
-          // Изменение цвета возле курсора на желтый
-          p.color = '#FFFF00';
+          // Изменение цвета возле курсора на цвет из анимации
+          p.color = getAnimationColor(currentTime);
         } else {
           // Белый цвет по умолчанию
           p.color = '#FFFFFF';
