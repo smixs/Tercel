@@ -28,13 +28,13 @@ export default function Home() {
         speedFactor={isTranscribing ? 5 : 1} 
       />
       
-      {/* Название Hertzel временно скрыто
-      <h1 className="relative z-10 mb-24 text-center">
+      {/* Название Petlya в новом формате */}
+      <h1 className="absolute top-8 z-10 text-center">
         <ShinyText 
-          text="Hertzel" 
-          speed={3}
+          text="Petlya" 
+          speed={2}
           colorShift={false}
-          className="text-8xl font-bold md:text-9xl lg:text-9xl font-Tektur text-transparent"
+          className="text-3xl md:text-4xl font-normal text-transparent font-warnes"
           style={{
             backgroundImage: "linear-gradient(120deg, rgba(15,15,15,0.1) 40%, rgba(220,220,220,0.5) 50%, rgba(15,15,15,0.1) 60%)",
             WebkitBackgroundClip: "text",
@@ -42,7 +42,6 @@ export default function Home() {
           }}
         />
       </h1>
-      */}
       
       {/* Увеличенный компонент InfinityEffect */}
       <div className="relative z-10 mb-4 w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] mx-auto">
@@ -57,7 +56,7 @@ export default function Home() {
       </div>
       
       <footer className="absolute bottom-4 text-sm text-muted-foreground">
-        © 2025 Hertzel
+        © 2025 Petlya
       </footer>
     </main>
   )

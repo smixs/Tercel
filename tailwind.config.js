@@ -7,6 +7,8 @@ module.exports = {
     extend: { 
       fontFamily: {
         sans: ['var(--font)'],
+        'Tektur': ['var(--font-Tektur)'],
+        'warnes': ['var(--font-warnes)'],
       },
       keyframes: { 
         "star-movement-top": { 
