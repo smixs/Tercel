@@ -45,7 +45,7 @@ export default function Home() {
       */}
       
       {/* Увеличенный компонент InfinityEffect */}
-      <div className="relative z-10 mb-12 w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] mx-auto">
+      <div className="relative z-10 mb-4 w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] mx-auto">
         <InfinityEffect particleCount={600} />
       </div>
       

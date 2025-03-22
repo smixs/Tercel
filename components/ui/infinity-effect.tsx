@@ -102,7 +102,7 @@ const InfinityEffect = ({
         lifeSpeed: 0.0008 + Math.random() * 0.0008,
         phase: Math.random() * TWO_PI,
         thicknessOffset: (Math.random() - 0.5) * 20,
-        size: (1.2 + Math.random() * 2.2) / 3, // Уменьшаем размер частиц в 3 раза
+        size: (1.2 + Math.random() * 2.2) / 2, // Уменьшаем размер частиц в 3 раза
         color: '#ffffff'  // Белый цвет по умолчанию
       });
     }
@@ -177,7 +177,7 @@ const InfinityEffect = ({
     
     // Формула кривой бесконечности
     const infinityCurve = (t: number) => {
-      const a = canvas.width / 5;
+      const a = canvas.width / 3;
       const x = a * Math.cos(t);
       const y = a * Math.sin(t) * Math.cos(t);
       return { x: x + canvas.width / 2, y: y + canvas.height / 2 };
@@ -185,7 +185,7 @@ const InfinityEffect = ({
     
     // Формула касательной к кривой
     const tangentAt = (t: number) => {
-      const a = canvas.width / 5;
+      const a = canvas.width / 3;
       const dx = -a * Math.sin(t);
       const dy = a * Math.cos(2*t);
       const length = Math.sqrt(dx*dx + dy*dy);
