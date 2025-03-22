@@ -49,17 +49,34 @@ export async function POST(request: NextRequest) {
       body: fireworksFormData,
     })
     
+    // Получаем ответ как текст, чтобы можно было проверить его содержимое
+    const responseText = await response.text();
+    console.log("Получен ответ от API:", responseText.slice(0, 100) + (responseText.length > 100 ? '...' : ''));
+    
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error(`Ошибка Fireworks API: ${response.status} - ${errorText}`)
+      console.error(`Ошибка Fireworks API: ${response.status} - ${responseText}`)
       return NextResponse.json(
         { error: `Ошибка API Fireworks: ${response.status}` },
         { status: response.status }
       )
     }
     
-    // Для TEXT всегда получаем текстовый ответ
-    const result = await response.text()
+    // Проверяем, может ли ответ быть валидным JSON
+    let jsonResult;
+    try {
+      if (responseText.trim().startsWith('{') || responseText.trim().startsWith('[')) {
+        jsonResult = JSON.parse(responseText);
+        console.log("Ответ был распознан как JSON");
+      }
+    } catch (e) {
+      console.log("Ответ не является валидным JSON, используем как текст");
+    }
+    
+    // Определяем результат на основе формата
+    let result = responseText;
+    if (jsonResult && (format as string) === "json") {
+      result = jsonResult;
+    }
     
     console.log("Транскрибирование успешно завершено")
     

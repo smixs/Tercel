@@ -57,7 +57,18 @@ export default function TranscriptionSection({
         body: formData,
       })
       
-      const data = await response.json()
+      // Сначала получаем ответ как текст
+      const responseText = await response.text();
+      
+      let data;
+      try {
+        // Пытаемся разобрать как JSON
+        data = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error("Ошибка при парсинге JSON:", parseError);
+        console.log("Ответ сервера:", responseText.substring(0, 200));
+        throw new Error(`Ошибка обработки ответа сервера: ${responseText.substring(0, 100)}...`);
+      }
       
       if (!response.ok) {
         throw new Error(data.error || `Ошибка сервера: ${response.status}`)
