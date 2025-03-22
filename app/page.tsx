@@ -2,8 +2,8 @@
 
 import { Particles } from "@/components/ui/particles"
 import TranscriptionSection from "@/components/transcription-section"
-import { ShinyText } from "@/components/ui/shiny-text"
 import InfinityEffect from "@/components/ui/infinity-effect"
+import { GooeyText } from "@/components/ui/gooey-text"
 import { useState } from "react"
 
 export default function Home() {
@@ -28,20 +28,19 @@ export default function Home() {
         speedFactor={isTranscribing ? 5 : 1} 
       />
       
-      {/* Название Petlya в новом формате */}
-      <h1 className="absolute top-8 z-10 text-center">
-        <ShinyText 
-          text="Petlya" 
-          speed={2}
-          colorShift={false}
-          className="text-3xl md:text-4xl font-normal text-transparent font-warnes"
-          style={{
-            backgroundImage: "linear-gradient(120deg, rgba(15,15,15,0.1) 40%, rgba(220,220,220,0.5) 50%, rgba(15,15,15,0.1) 60%)",
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text"
-          }}
-        />
-      </h1>
+      {/* Название с анимацией GooeyText */}
+      <div className="absolute top-6 z-20 left-0 right-0 mx-auto text-center">
+        <div className="relative mx-auto h-24 w-full max-w-md">
+          <GooeyText 
+            texts={["Petlya", "Transcription", "Audio"]} 
+            morphTime={1.2}
+            cooldownTime={2}
+            className="h-full font-warnes"
+            textClassName="text-3xl md:text-4xl text-white font-warnes tracking-wider"
+            glowEffect={true}
+          />
+        </div>
+      </div>
       
       {/* Увеличенный компонент InfinityEffect */}
       <div className="relative z-10 mb-4 w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] mx-auto">
