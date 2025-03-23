@@ -20,7 +20,7 @@ export function GooeyText({
 }: GooeyTextProps) {
   const text1Ref = React.useRef<HTMLSpanElement>(null);
   const text2Ref = React.useRef<HTMLSpanElement>(null);
-  const animationFrameRef = React.useRef<number>();
+  const animationFrameRef = React.useRef<number | null>(null);
   const lastTimeRef = React.useRef<number>(0);
   const isVisibleRef = React.useRef<boolean>(true);
 
@@ -106,7 +106,7 @@ export function GooeyText({
         }
       } else if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
-        animationFrameRef.current = undefined;
+        animationFrameRef.current = null;
       }
     };
 
@@ -118,6 +118,7 @@ export function GooeyText({
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
     };
   }, [texts, morphTime, cooldownTime]);
