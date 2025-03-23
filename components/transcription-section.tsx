@@ -38,62 +38,73 @@ export default function TranscriptionSection({
       setIsProcessing(true)
       setError(null)
       
-      // Вызываем колбэк начала транскрибирования
+      const apiKey = process.env.NEXT_PUBLIC_API_KEY
+      console.log('API ключ доступен:', !!apiKey)
+      
+      if (!apiKey) {
+        throw new Error("API ключ не настроен. Проверьте файл .env.local")
+      }
+      
       onTranscriptionStart?.()
       
-      // Формируем данные для отправки на сервер
+      // Создаем FormData для прямой отправки в Fireworks
       const formData = new FormData()
       formData.append("file", file)
-      formData.append("format", selectedFormat)
+      formData.append("vad_model", "silero")
+      formData.append("alignment_model", "tdnn_ffn")
+      formData.append("preprocessing", "dynamic")
+      formData.append("temperature", "0")
+      formData.append("timestamp_granularities", "segment")
+      formData.append("response_format", "text")
       
-      console.log(`Отправка файла ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} МБ), формат: ${selectedFormat}`)
+      console.log(`Отправка файла ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} МБ) в Fireworks API`)
       
-      // Небольшая задержка, чтобы показать состояние "transcribing"
-      await new Promise(resolve => setTimeout(resolve, 500))
-      
-      // Отправляем запрос на API
-      const response = await fetch("/api/transcribe", {
+      const response = await fetch("https://audio-prod.us-virginia-1.direct.fireworks.ai/v1/audio/transcriptions", {
         method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          // Не добавляем Content-Type, так как браузер сам добавит правильный boundary для multipart/form-data
+        },
         body: formData,
       })
       
-      // Сначала получаем ответ как текст
-      const responseText = await response.text();
-      
-      let data;
-      try {
-        // Пытаемся разобрать как JSON
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("Ошибка при парсинге JSON:", parseError);
-        console.log("Ответ сервера:", responseText.substring(0, 200));
-        throw new Error(`Ошибка обработки ответа сервера: ${responseText.substring(0, 100)}...`);
-      }
+      // Получаем ответ как текст
+      const responseText = await response.text()
       
       if (!response.ok) {
-        throw new Error(data.error || `Ошибка сервера: ${response.status}`)
+        // Пробуем распарсить ошибку как JSON
+        try {
+          const errorData = JSON.parse(responseText)
+          throw new Error(errorData.error?.message || `Ошибка API Fireworks: ${response.status}`)
+        } catch (e) {
+          throw new Error(responseText || `Ошибка API Fireworks: ${response.status}`)
+        }
       }
       
-      if (data.success) {
-        setResult({
-          text: data.text,
-          format: data.format
-        })
-        
-        // Автоматически переключаемся на вкладку результатов
-        setActiveTab("result")
-        
-        return Promise.resolve()
-      } else {
-        throw new Error(data.error || "Неизвестная ошибка")
+      // Пробуем распарсить как JSON если возможно
+      let data = responseText
+      try {
+        data = JSON.parse(responseText)
+      } catch (e) {
+        // Если не JSON, используем как текст
+        console.log("Ответ не является JSON, используем как текст")
       }
+      
+      setResult({
+        text: data,
+        format: "text"
+      })
+      
+      // Переключаемся на вкладку результатов
+      setActiveTab("result")
+      
+      return Promise.resolve()
     } catch (error: unknown) {
       console.error("Ошибка обработки файла:", error)
       setError(error instanceof Error ? error.message : "Ошибка при транскрибировании")
       return Promise.reject(error)
     } finally {
       setIsProcessing(false)
-      // Вызываем колбэк окончания транскрибирования
       onTranscriptionEnd?.()
     }
   }
