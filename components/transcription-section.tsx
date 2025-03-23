@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { FileText, Headphones, AlertCircle, ClipboardCopy, Download } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { ParticleButton } from "@/components/ui/particle-button"
 
 import { Dropzone } from "@/components/ui/dropzone"
 import { Button } from "@/components/ui/button"
@@ -283,14 +285,14 @@ export default function TranscriptionSection({
                 </pre>
               </CardContent>
               <CardFooter className="flex gap-2">
-                <Button onClick={handleDownload} variant="outline">
+                <ParticleButton onClick={handleDownload} variant="outline" successDuration={400}>
                   <Download className="mr-2 h-4 w-4" />
                   Скачать
-                </Button>
-                <Button onClick={handleCopy} variant="outline">
+                </ParticleButton>
+                <ParticleButton onClick={handleCopy} variant="outline" successDuration={400}>
                   <ClipboardCopy className="mr-2 h-4 w-4" />
                   Копировать
-                </Button>
+                </ParticleButton>
               </CardFooter>
             </Card>
           )}
