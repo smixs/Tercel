@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { FileText, Headphones, AlertCircle, ClipboardCopy, Download } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ParticleButton } from "@/components/ui/particle-button"
@@ -23,6 +23,7 @@ interface TranscriptionResult {
 interface TranscriptionSectionProps {
   onTranscriptionStart?: () => void
   onTranscriptionEnd?: () => void
+  onResultChange?: (hasResult: boolean) => void
 }
 
 // Этапы процесса транскрибации
@@ -35,7 +36,8 @@ const TRANSCRIPTION_STAGES = {
 
 export default function TranscriptionSection({ 
   onTranscriptionStart, 
-  onTranscriptionEnd 
+  onTranscriptionEnd,
+  onResultChange 
 }: TranscriptionSectionProps) {
   const [result, setResult] = useState<TranscriptionResult | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -44,6 +46,11 @@ export default function TranscriptionSection({
   const [error, setError] = useState<string | null>(null)
   const [currentStage, setCurrentStage] = useState<keyof typeof TRANSCRIPTION_STAGES | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
+
+  // Уведомляем родительский компонент об изменении результата
+  useEffect(() => {
+    onResultChange?.(!!result)
+  }, [result, onResultChange])
 
   // Функция для отправки файла через XMLHttpRequest
   const sendFileWithProgress = (file: File, apiKey: string): Promise<string> => {
@@ -280,7 +287,7 @@ export default function TranscriptionSection({
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <pre className="min-h-[200px] max-h-[500px] md:max-h-[600px] h-auto overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-4 text-sm transition-all">
+                <pre className="min-h-[20px] max-h-[500px] md:max-h-[600px] h-auto overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-4 text-sm transition-all">
                   {formatResultText(result.text, result.format)}
                 </pre>
               </CardContent>

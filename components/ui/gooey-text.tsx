@@ -20,10 +20,12 @@ export function GooeyText({
 }: GooeyTextProps) {
   const text1Ref = React.useRef<HTMLSpanElement>(null);
   const text2Ref = React.useRef<HTMLSpanElement>(null);
+  const animationFrameRef = React.useRef<number>();
+  const lastTimeRef = React.useRef<number>(0);
+  const isVisibleRef = React.useRef<boolean>(true);
 
   React.useEffect(() => {
     let textIndex = texts.length - 1;
-    let time = new Date();
     let morph = 0;
     let cooldown = cooldownTime;
 
@@ -61,33 +63,62 @@ export function GooeyText({
       setMorph(fraction);
     };
 
-    function animate() {
-      requestAnimationFrame(animate);
-      const newTime = new Date();
-      const shouldIncrementIndex = cooldown > 0;
-      const dt = (newTime.getTime() - time.getTime()) / 1000;
-      time = newTime;
-
-      cooldown -= dt;
-
-      if (cooldown <= 0) {
-        if (shouldIncrementIndex) {
-          textIndex = (textIndex + 1) % texts.length;
-          if (text1Ref.current && text2Ref.current) {
-            text1Ref.current.textContent = texts[textIndex % texts.length];
-            text2Ref.current.textContent = texts[(textIndex + 1) % texts.length];
-          }
-        }
-        doMorph();
-      } else {
-        doCooldown();
+    const animate = (currentTime: number) => {
+      if (!isVisibleRef.current) {
+        lastTimeRef.current = currentTime;
+        return;
       }
-    }
 
-    animate();
+      const dt = lastTimeRef.current ? (currentTime - lastTimeRef.current) / 1000 : 0.016;
+      lastTimeRef.current = currentTime;
+
+      if (dt > 0.1) { // Если прошло слишком много времени (например, после переключения вкладки)
+        cooldown = cooldownTime; // Сбрасываем состояние
+        morph = 0;
+      } else {
+        cooldown -= dt;
+
+        if (cooldown <= 0) {
+          if (morph === 0) {
+            textIndex = (textIndex + 1) % texts.length;
+            if (text1Ref.current && text2Ref.current) {
+              text1Ref.current.textContent = texts[textIndex % texts.length];
+              text2Ref.current.textContent = texts[(textIndex + 1) % texts.length];
+            }
+          }
+          doMorph();
+        } else {
+          doCooldown();
+        }
+      }
+
+      animationFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    // Обработчик видимости страницы
+    const handleVisibilityChange = () => {
+      isVisibleRef.current = document.visibilityState === 'visible';
+      
+      if (isVisibleRef.current) {
+        lastTimeRef.current = performance.now(); // Сбрасываем время при возврате на вкладку
+        if (!animationFrameRef.current) {
+          animationFrameRef.current = requestAnimationFrame(animate);
+        }
+      } else if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = undefined;
+      }
+    };
+
+    // Подписываемся на изменения видимости страницы
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    animationFrameRef.current = requestAnimationFrame(animate);
 
     return () => {
-      // Cleanup function if needed
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
   }, [texts, morphTime, cooldownTime]);
 
@@ -131,4 +162,4 @@ export function GooeyText({
       </div>
     </div>
   );
-} 
+}
