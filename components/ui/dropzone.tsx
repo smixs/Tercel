@@ -13,15 +13,20 @@ export type FileStatus = "idle" | "uploading" | "transcribing" | "success" | "er
 interface DropzoneProps {
   onFileDrop: (file: File) => Promise<void>
   className?: string
+  currentStage?: string | null
+  uploadProgress?: number
+  stageMessage?: string
 }
 
 export function Dropzone({
   onFileDrop,
   className,
+  currentStage,
+  uploadProgress = 0,
+  stageMessage,
 }: DropzoneProps) {
   const [file, setFile] = useState<File | null>(null)
   const [status, setStatus] = useState<FileStatus>("idle")
-  const [progress, setProgress] = useState(0)
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -30,29 +35,13 @@ export function Dropzone({
       const selectedFile = acceptedFiles[0]
       setFile(selectedFile)
       setStatus("uploading")
-      
-      // Загрузка файла с прогрессом от 0% до 100%
-      const interval = setInterval(() => {
-        setProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval)
-            // После полной загрузки переходим в состояние транскрибирования
-            setStatus("transcribing")
-            return 100
-          }
-          return Math.min(prev + 5, 100)
-        })
-      }, 150)
 
       try {
         await onFileDrop(selectedFile)
-        // Не меняем статус здесь, т.к. он уже будет "transcribing"
         setStatus("success")
       } catch (error) {
         setStatus("error")
         console.error("Error processing file:", error)
-      } finally {
-        clearInterval(interval)
       }
     },
     [onFileDrop]
@@ -89,6 +78,15 @@ export function Dropzone({
     return `${(size / (1024 * 1024)).toFixed(2)} МБ`
   }
 
+  // Функция для отображения сообщения о текущем этапе
+  const getStatusMessage = () => {
+    if (isError) return "Ошибка обработки"
+    if (isSuccess) return "Транскрибирование завершено!"
+    if (currentStage && stageMessage) return stageMessage
+    if (isIdle) return " "
+    return "Обработка..."
+  }
+
   return (
     <Card
       className={cn(
@@ -119,56 +117,32 @@ export function Dropzone({
             </div>
 
             <div className="flex flex-col items-center gap-1 text-center">
-              {/* {isIdle && (
-                <>
-                  <p className="text-lg font-medium">
-                    Кидай сюда или нажми
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    MP3, WAV, AAC, FLAC, OGG, M4A
-                  </p>
-                </>
-              )} */}
-
-              {isUploading && (
-                <>
-                  <p className="text-lg font-medium">Загрузка файла...</p>
-                  <p className="text-sm text-muted-foreground">
-                    {file?.name} ({formatFileSize(file?.size)})
-                  </p>
-                </>
+              <p className="text-lg font-medium">
+                {getStatusMessage()}
+              </p>
+              {file && (
+                <p className="text-sm text-muted-foreground">
+                  {file.name} ({formatFileSize(file.size)})
+                </p>
               )}
-
-              {isTranscribing && (
-                <p className="text-lg font-medium">Идет транскрибирование...</p>
-              )}
-
-              {isSuccess && (
-                <>
-                  <p className="text-lg font-medium">Транскрибирование завершено!</p>
-                  <p className="text-sm text-muted-foreground">
-                    {file?.name} ({formatFileSize(file?.size)})
-                  </p>
-                </>
-              )}
-
-              {isError && (
-                <>
-                  <p className="text-lg font-medium">Ошибка обработки</p>
-                  <p className="text-sm text-muted-foreground">
-                    Пожалуйста, попробуйте ещё раз
-                  </p>
-                </>
+              {!file && !isError && (
+                <p className="text-sm text-muted-foreground">
+                  MP3, WAV, AAC, FLAC, OGG, M4A
+                </p>
               )}
             </div>
           </div>
         </div>
 
-        {isUploading && (
+        {(isUploading || currentStage) && (
           <div className="px-6 py-3">
-            <Progress value={progress} className="h-2 w-full" />
+            <Progress 
+              value={uploadProgress} 
+              className="h-2 w-full"
+              stage={currentStage?.toLowerCase() as "upload" | "transcode" | "vad" | "transcribe"}
+            />
             <p className="mt-2 text-xs text-muted-foreground">
-              Загрузка: {progress}%
+              {currentStage === "UPLOAD" ? `Загрузка: ${Math.round(uploadProgress)}%` : stageMessage}
             </p>
           </div>
         )}

@@ -374,3 +374,49 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Стили для прогресс-бара на разных этапах */
+.progress-upload {
+  @apply bg-primary/20;
+}
+.progress-upload [data-slot="progress-indicator"] {
+  @apply bg-primary;
+}
+
+.progress-transcode {
+  @apply bg-amber-500/20;
+}
+.progress-transcode [data-slot="progress-indicator"] {
+  @apply bg-amber-500;
+}
+
+.progress-vad {
+  @apply bg-purple-500/20;
+}
+.progress-vad [data-slot="progress-indicator"] {
+  @apply bg-purple-500;
+}
+
+.progress-transcribe {
+  @apply bg-green-500/20;
+}
+.progress-transcribe [data-slot="progress-indicator"] {
+  @apply bg-green-500;
+}
+
+/* Анимация пульсации для индикатора прогресса */
+@keyframes progressPulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+[data-slot="progress-indicator"] {
+  animation: progressPulse 2s ease-in-out infinite;
+}
