@@ -52,7 +52,7 @@ export default function Home() {
       </div>
       
       <footer className="absolute bottom-4 text-sm text-muted-foreground">
-        © 2025 Petlya
+        © 2025 TDI AI
       </footer>
     </main>
   )
