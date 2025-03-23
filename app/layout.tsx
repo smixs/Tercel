@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { tektur, warnes, rubikGlitch } from "@/app/fonts";
 
 export const metadata = {
-  title: "Petlya",
+  title: "Zapis FYI",
   description: "Сервис транскрипции аудио в текст",
   icons: {
     icon: "/favicon.ico",

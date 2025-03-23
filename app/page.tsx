@@ -31,7 +31,7 @@ export default function Home() {
       <div className="flex flex-col items-center gap-2">
         {/* Название с анимацией GooeyText */}
         <GooeyText
-          texts={["Petlya", "Transcription", "Audio"]}
+          texts={["Zapis", "For", "Your", "Information"]}
           morphTime={1}
           cooldownTime={0.25}
           className="h-16 font-rubik-glitch"
