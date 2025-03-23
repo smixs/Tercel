@@ -2,23 +2,24 @@
 
 import * as React from "react"
 import { useState, useRef } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import type { ButtonProps } from "@/components/ui/button";
 import { MousePointerClick } from "lucide-react";
+import { VariantProps } from "class-variance-authority";
 
-interface ParticleButtonProps extends ButtonProps {
+interface ParticleButtonProps extends React.ComponentProps<"button">, VariantProps<typeof buttonVariants> {
     onSuccess?: () => void;
     successDuration?: number;
     children: React.ReactNode;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    className?: string;
 }
 
 function SuccessParticles({
     buttonRef,
 }: {
-    buttonRef: React.RefObject<HTMLButtonElement>;
+    buttonRef: React.RefObject<HTMLButtonElement | null>;
 }) {
     const rect = buttonRef.current?.getBoundingClientRect();
     if (!rect) return null;
@@ -60,6 +61,8 @@ function ParticleButton({
     onSuccess,
     successDuration = 1000,
     className,
+    variant,
+    size,
     ...props
 }: ParticleButtonProps) {
     const [showParticles, setShowParticles] = useState(false);
@@ -93,6 +96,8 @@ function ParticleButton({
                     "transition-transform duration-100",
                     className
                 )}
+                variant={variant}
+                size={size}
                 {...props}
             >
                 {children}
