@@ -44,7 +44,7 @@ export default function Home() {
           textClassName="text-4xl md:text-5xl lg:text-6xl tracking-wider text-white font-bold"
         />
         
-        <div className="w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] -mt-6 md:-mt-8">
+        <div className="w-60 h-60 md:w-96 md:h-66 lg:w-[22rem] lg:h-[22rem] -mt-6 md:-mt-8">
           <InfinityEffect 
             particleCount={600}
             className="w-full h-full"
@@ -53,7 +53,7 @@ export default function Home() {
       </div>
       
       {/* Контейнер с результатом */}
-      <div className="w-full flex items-center justify-center mt-16">
+      <div className="w-full flex items-center justify-center mt-8">
         <div className="w-full max-w-2xl px-4 mb-16">
           <TranscriptionSection 
             onTranscriptionStart={handleTranscriptionStart}
