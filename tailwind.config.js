@@ -9,6 +9,7 @@ module.exports = {
         sans: ['var(--font)'],
         'Tektur': ['var(--font-Tektur)'],
         'warnes': ['var(--font-warnes)'],
+        'rubik-glitch': ['var(--font-rubik-glitch)'],
       },
       keyframes: { 
         "star-movement-top": { 

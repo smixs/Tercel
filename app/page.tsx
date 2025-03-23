@@ -28,25 +28,23 @@ export default function Home() {
         speedFactor={isTranscribing ? 5 : 1} 
       />
       
-      {/* Название с анимацией GooeyText */}
-      <div className="absolute top-6 z-20 left-0 right-0 mx-auto text-center">
-        <div className="relative mx-auto h-24 w-full max-w-md">
-          <GooeyText
-            texts={["Petlya", "Transcription", "Audio"]}
-            morphTime={1}
-            cooldownTime={0.25}
-            className="h-full font-warnes"
-            textClassName="text-4xl md:text-5xl lg:text-6xl tracking-wider text-white font-bold"
-          />
+      <div className="flex flex-col items-center gap-2">
+        {/* Название с анимацией GooeyText */}
+        <GooeyText
+          texts={["Petlya", "Transcription", "Audio"]}
+          morphTime={1}
+          cooldownTime={0.25}
+          className="h-16 font-rubik-glitch"
+          textClassName="text-4xl md:text-5xl lg:text-6xl tracking-wider text-white font-bold"
+        />
+        
+        {/* Знак бесконечности */}
+        <div className="w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem]">
+          <InfinityEffect particleCount={600} />
         </div>
       </div>
       
-      {/* Увеличенный компонент InfinityEffect */}
-      <div className="relative z-10 mb-4 w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] mx-auto">
-        <InfinityEffect particleCount={600} />
-      </div>
-      
-      <div className="z-10 w-full max-w-2xl">
+      <div className="w-full max-w-2xl">
         <TranscriptionSection 
           onTranscriptionStart={handleTranscriptionStart}
           onTranscriptionEnd={handleTranscriptionEnd}
