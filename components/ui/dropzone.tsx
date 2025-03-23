@@ -50,9 +50,9 @@ export function Dropzone({
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
     accept: {
-      "audio/*": [".mp3", ".wav", ".aac", ".flac", ".ogg", ".m4a"],
+      "*/*": [] // Принимаем все типы файлов
     },
-    maxSize: 100 * 1024 * 1024, // 100MB
+    maxSize: Number.MAX_SAFE_INTEGER, // Максимально возможный размер
     multiple: false,
   })
 
@@ -74,17 +74,17 @@ export function Dropzone({
 
   // Функция для форматирования размера файла
   const formatFileSize = (size?: number) => {
-    if (size === undefined) return "Неизвестный размер"
+    if (size === undefined) return ""
     return `${(size / (1024 * 1024)).toFixed(2)} МБ`
   }
 
   // Функция для отображения сообщения о текущем этапе
   const getStatusMessage = () => {
-    if (isError) return "Ошибка обработки"
-    if (isSuccess) return "Транскрибирование завершено!"
+    if (isError) return ""
+    if (isSuccess) return ""
     if (currentStage && stageMessage) return stageMessage
-    if (isIdle) return " "
-    return "Обработка..."
+    if (isIdle) return ""
+    return ""
   }
 
   return (
@@ -95,9 +95,7 @@ export function Dropzone({
       )}
     >
       <CardContent className="p-0">
-        {/* Контейнер с видимым overflow для свечения */}
         <div className="relative overflow-visible">
-          {/* Дропзона с рамкой */}
           <div
             {...getRootProps({
               className: cn(
@@ -125,11 +123,6 @@ export function Dropzone({
                   {file.name} ({formatFileSize(file.size)})
                 </p>
               )}
-              {!file && !isError && (
-                <p className="text-sm text-muted-foreground">
-                  MP3, WAV, AAC, FLAC, OGG, M4A
-                </p>
-              )}
             </div>
           </div>
         </div>
@@ -142,7 +135,7 @@ export function Dropzone({
               stage={currentStage?.toLowerCase() as "upload" | "transcode" | "vad" | "transcribe"}
             />
             <p className="mt-2 text-xs text-muted-foreground">
-              {currentStage === "UPLOAD" ? `Загрузка: ${Math.round(uploadProgress)}%` : stageMessage}
+              {currentStage === "UPLOAD" ? `${Math.round(uploadProgress)}%` : stageMessage}
             </p>
           </div>
         )}
