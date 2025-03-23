@@ -6,10 +6,7 @@ module.exports = {
   theme: { 
     extend: { 
       fontFamily: {
-        sans: ['var(--font)'],
-        'Tektur': ['var(--font-Tektur)'],
-        'warnes': ['var(--font-warnes)'],
-        'rubik-glitch': ['var(--font-rubik-glitch)'],
+        sans: ['Space Grotesk', 'sans-serif'],
       },
       keyframes: { 
         "star-movement-top": { 

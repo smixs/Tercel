@@ -1,7 +1,12 @@
 import "@/app/globals.css";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
-import { tektur, warnes, rubikGlitch } from "@/app/fonts";
+import { Space_Grotesk } from "next/font/google";
+
+const spaceGrotesk = Space_Grotesk({ 
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 export const metadata = {
   title: "Zapis FYI",
@@ -17,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" suppressHydrationWarning className={`${tektur.variable} ${warnes.variable} ${rubikGlitch.variable}`}>
+    <html lang="ru" suppressHydrationWarning className={spaceGrotesk.className}>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased"
