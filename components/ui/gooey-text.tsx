@@ -18,6 +18,8 @@ export function GooeyText({
   className,
   textClassName
 }: GooeyTextProps) {
+  // Старая анимированная версия (закомментирована)
+  /*
   const text1Ref = React.useRef<HTMLSpanElement>(null);
   const text2Ref = React.useRef<HTMLSpanElement>(null);
   const animationFrameRef = React.useRef<number | null>(null);
@@ -161,6 +163,22 @@ export function GooeyText({
           )}
         />
       </div>
+    </div>
+  );
+  */
+
+  // Новая статичная версия
+  return (
+    <div className={cn("relative flex flex-col items-center", className)}>
+      <span className={cn(
+        "text-5xl md:text-6xl lg:text-7xl font-bold tracking-wider text-white",
+        textClassName
+      )}>
+        ZAPIS
+      </span>
+      <span className="text-base md:text-lg lg:text-xl text-white/80 mt-2 whitespace-nowrap">
+        for your information
+      </span>
     </div>
   );
 }
