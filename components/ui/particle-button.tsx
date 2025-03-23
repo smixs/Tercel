@@ -12,6 +12,7 @@ interface ParticleButtonProps extends ButtonProps {
     onSuccess?: () => void;
     successDuration?: number;
     children: React.ReactNode;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 function SuccessParticles({
