@@ -31,13 +31,12 @@ export default function Home() {
       {/* Название с анимацией GooeyText */}
       <div className="absolute top-6 z-20 left-0 right-0 mx-auto text-center">
         <div className="relative mx-auto h-24 w-full max-w-md">
-          <GooeyText 
-            texts={["Petlya", "Transcription", "Audio"]} 
-            morphTime={1.2}
-            cooldownTime={2}
+          <GooeyText
+            texts={["Petlya", "Transcription", "Audio"]}
+            morphTime={1}
+            cooldownTime={0.25}
             className="h-full font-warnes"
-            textClassName="text-3xl md:text-4xl text-white font-warnes tracking-wider"
-            glowEffect={true}
+            textClassName="text-4xl md:text-5xl lg:text-6xl tracking-wider text-white font-bold"
           />
         </div>
       </div>

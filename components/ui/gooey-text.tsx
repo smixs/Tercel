@@ -9,7 +9,6 @@ interface GooeyTextProps {
   cooldownTime?: number;
   className?: string;
   textClassName?: string;
-  glowEffect?: boolean;
 }
 
 export function GooeyText({
@@ -17,8 +16,7 @@ export function GooeyText({
   morphTime = 1,
   cooldownTime = 0.25,
   className,
-  textClassName,
-  glowEffect = true
+  textClassName
 }: GooeyTextProps) {
   const text1Ref = React.useRef<HTMLSpanElement>(null);
   const text2Ref = React.useRef<HTMLSpanElement>(null);
@@ -37,12 +35,6 @@ export function GooeyText({
         fraction = 1 - fraction;
         text1Ref.current.style.filter = `blur(${Math.min(8 / fraction - 8, 100)}px)`;
         text1Ref.current.style.opacity = `${Math.pow(fraction, 0.4) * 100}%`;
-        
-        if (glowEffect) {
-          const intensity = Math.sin(fraction * Math.PI) * 0.25;
-          text1Ref.current.style.textShadow = `0 0 ${Math.floor(intensity * 8)}px rgba(255, 255, 255, ${intensity})`;
-          text2Ref.current.style.textShadow = `0 0 ${Math.floor((1-intensity) * 8)}px rgba(255, 255, 255, ${1-intensity})`;
-        }
       }
     };
 
@@ -53,11 +45,6 @@ export function GooeyText({
         text2Ref.current.style.opacity = "100%";
         text1Ref.current.style.filter = "";
         text1Ref.current.style.opacity = "0%";
-        
-        if (glowEffect) {
-          text2Ref.current.style.textShadow = `0 0 4px rgba(255, 255, 255, 0.25)`;
-          text1Ref.current.style.textShadow = "none";
-        }
       }
     };
 
@@ -97,25 +84,15 @@ export function GooeyText({
       }
     }
 
-    // Инициализация первоначального текста
-    if (text1Ref.current && text2Ref.current) {
-      text1Ref.current.textContent = texts[textIndex % texts.length];
-      text2Ref.current.textContent = texts[(textIndex + 1) % texts.length];
-    }
-
     animate();
 
     return () => {
-      // Очистка анимации
-      if (text1Ref.current && text2Ref.current) {
-        text1Ref.current.textContent = "";
-        text2Ref.current.textContent = "";
-      }
+      // Cleanup function if needed
     };
-  }, [texts, morphTime, cooldownTime, glowEffect]);
+  }, [texts, morphTime, cooldownTime]);
 
   return (
-    <div className={cn("relative overflow-hidden", className)}>
+    <div className={cn("relative", className)}>
       <svg className="absolute h-0 w-0" aria-hidden="true" focusable="false">
         <defs>
           <filter id="threshold">
@@ -132,22 +109,22 @@ export function GooeyText({
       </svg>
 
       <div
-        className="flex h-full w-full items-center justify-center"
+        className="flex items-center justify-center"
         style={{ filter: "url(#threshold)" }}
       >
         <span
           ref={text1Ref}
           className={cn(
-            "absolute inline-block select-none text-center text-4xl font-medium md:text-5xl",
-            "text-primary-foreground dark:text-white",
+            "absolute inline-block select-none text-center text-6xl md:text-[60pt]",
+            "text-foreground",
             textClassName
           )}
         />
         <span
           ref={text2Ref}
           className={cn(
-            "absolute inline-block select-none text-center text-4xl font-medium md:text-5xl",
-            "text-primary-foreground dark:text-white",
+            "absolute inline-block select-none text-center text-6xl md:text-[60pt]",
+            "text-foreground",
             textClassName
           )}
         />

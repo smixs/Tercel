@@ -420,3 +420,5 @@
 [data-slot="progress-indicator"] {
   animation: progressPulse 2s ease-in-out infinite;
 }
+
+/* Удаляем старые стили для GooeyText */
