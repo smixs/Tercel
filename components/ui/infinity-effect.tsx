@@ -1,3 +1,4 @@
+// File: /Users/xshima/Projects/tercel/frontend/components/ui/infinity-effect.tsx
 "use client";
 
 import React, { useEffect, useRef, useState } from 'react';
@@ -11,7 +12,7 @@ interface InfinityEffectProps {
 
 interface Particle {
   curveProgress: number;
-  curveSpeed: number;
+  curveSpeed: number; // Оригинальная скорость вращения
   lifeProgress: number;
   lifeSpeed: number;
   phase: number;
@@ -20,124 +21,119 @@ interface Particle {
   color: string;
 }
 
-const InfinityEffect = ({ 
-  text = "", 
-  particleCount = 500,
-  className 
+const InfinityEffect = ({
+  text = "",
+  particleCount = 600, // Увеличим немного для плотности
+  className
 }: InfinityEffectProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const textRef = useRef<HTMLDivElement | null>(null);
   const animationTimeRef = useRef(0);
-  
+
+  // Параметры взаимодействия (усиленные)
+  const mouseEffectRadiusFactor = 0.3;
+  const attractionRadiusFactor = 0.5;
+  const attractStrength = 45; // Еще немного увеличим силу
+  const deadZoneFactor = 0.03;
+  const particleEnlargeFactor = 2.5; // И увеличение
+  const particleBaseSize = 1.0;
+  const particleRandomSize = 1.5;
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const container = containerRef.current;
     const textElement = textRef.current;
-    
+
     if (!canvas || !container || !textElement) return;
-    
+
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
-    // Настройка текста, если он указан
+
+    let mouseEffectRadius = canvas.width * mouseEffectRadiusFactor;
+    let attractionRadius = canvas.width * attractionRadiusFactor;
+    let deadZone = canvas.width * deadZoneFactor;
+
+    // Настройка текста (без изменений)
     if (text) {
       textElement.innerHTML = "";
       for (const char of text) {
         const span = document.createElement("span");
-        span.textContent = char;
+        span.textContent = char === " " ? "\u00A0" : char; // Используем юникод пробела
         span.style.display = "inline-block";
-        span.style.color = "#f5f5f5";
+        span.style.color = "var(--color-foreground)"; // Используем CSS переменную
         textElement.appendChild(span);
       }
     } else {
-      // Если текст не указан, скрываем элемент
       textElement.style.display = 'none';
     }
-    
-    // Настройка размеров канваса
+
     const resize = () => {
       const rect = container.getBoundingClientRect();
       const size = Math.min(rect.width, rect.height);
-      
+
       canvas.width = size;
       canvas.height = size;
       canvas.style.width = `${size}px`;
       canvas.style.height = `${size}px`;
-      
-      // Размещение текста в центре, если он указан
+
+      mouseEffectRadius = size * mouseEffectRadiusFactor;
+      attractionRadius = size * attractionRadiusFactor;
+      deadZone = size * deadZoneFactor;
+
       if (text) {
-        const fontSize = Math.max(20, Math.floor(size / 15));
+        const fontSize = Math.max(18, Math.floor(size / 16)); // Сделаем чуть меньше базовый
         textElement.style.fontSize = `${fontSize}px`;
         textElement.style.left = `${size / 2}px`;
-        textElement.style.top = `${size / 2 - fontSize}px`;
+        textElement.style.top = `${size / 2 - fontSize * 0.6}px`; // Поднимем чуть выше
       }
     };
-    
-    // Инициализация размеров
+
     resize();
     window.addEventListener('resize', resize);
-    
-    // Константы для анимации
+
     const TWO_PI = Math.PI * 2;
-    
-    // Настройки для влияния курсора
-    const mouseEffectRadius = canvas.width * 0.2;
-    const attractionRadius = canvas.width * 0.4;
-    const attractStrength = 5;
-    const deadZone = 20;
-    
-    // Нейтральная позиция курсора (вне экрана)
     const neutralPosition = { x: 9999, y: 9999 };
+    // --- УБИРАЕМ LERP ---
     let mouse = { ...neutralPosition };
-    
-    // Цвета для анимации, соответствующие анимации colorPulse
+    // --------------------
+
+    // Цвета для анимации (без изменений)
     const animationColors = [
-      'hsla(0, 80%, 65%, 0.9)',     // Красный
-      'hsla(40, 90%, 60%, 0.95)',   // Оранжевый  
-      'hsla(60, 100%, 65%, 0.95)',  // Желтый
-      'hsla(120, 90%, 55%, 0.95)',  // Зеленый
-      'hsla(200, 90%, 60%, 0.95)',  // Голубой
-      'hsla(260, 85%, 65%, 0.95)',  // Синий
-      'hsla(0, 80%, 65%, 0.9)'      // Красный (повтор)
+      'hsla(0, 80%, 65%, 0.9)',
+      'hsla(40, 90%, 60%, 0.95)',
+      'hsla(60, 100%, 65%, 0.95)',
+      'hsla(120, 90%, 55%, 0.95)',
+      'hsla(200, 90%, 60%, 0.95)',
+      'hsla(260, 85%, 65%, 0.95)',
+      'hsla(0, 80%, 65%, 0.9)'
     ];
-    
-    // Функция для получения текущего цвета из анимации
+
     const getAnimationColor = (time: number) => {
-      // 12 секунд - это длительность анимации colorPulse
-      const animationDuration = 12000; 
+      const animationDuration = 12000;
       const normalizedTime = (time % animationDuration) / animationDuration;
-      
-      // Определяем, между какими двумя ключевыми кадрами находимся
       const numKeyframes = animationColors.length;
       const keyframeProgress = normalizedTime * (numKeyframes - 1);
       const keyframeIndex = Math.floor(keyframeProgress);
-      const mix = keyframeProgress - keyframeIndex;
-      
-      // Не выходим за пределы массива
-      const nextIndex = Math.min(keyframeIndex + 1, animationColors.length - 1);
-      
       return animationColors[keyframeIndex];
     };
-    
-    // Создание частиц с уменьшенной скоростью движения
+
+    // Создание частиц (без изменений)
     const particles: Particle[] = [];
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         curveProgress: Math.random(),
-        // Значительно уменьшаем скорость движения частиц по кривой
-        curveSpeed: 0.0001 + Math.random() * 0.0002,
+        curveSpeed: 0.0001 + Math.random() * 0.0002, // Оригинальная скорость
         lifeProgress: Math.random(),
-        // Также уменьшаем скорость жизненного цикла
-        lifeSpeed: 0.0008 + Math.random() * 0.0008,
+        lifeSpeed: 0.0008 + Math.random() * 0.0008, // Оригинальная скорость жизни
         phase: Math.random() * TWO_PI,
         thicknessOffset: (Math.random() - 0.5) * 20,
-        size: (1.2 + Math.random() * 2.2) / 2, // Уменьшаем размер частиц в 3 раза
-        color: '#ffffff'  // Белый цвет по умолчанию
+        size: (particleBaseSize + Math.random() * particleRandomSize),
+        color: 'var(--color-foreground)' // Используем CSS переменную
       });
     }
-    
-    // Обработчики событий для мыши
+
+    // --- ВОЗВРАЩАЕМ ПРЯМОЕ ПРИСВАИВАНИЕ ---
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       mouse = {
@@ -145,217 +141,190 @@ const InfinityEffect = ({
         y: e.clientY - rect.top
       };
     };
-    
+
     const handleMouseLeave = () => {
       mouse = { ...neutralPosition };
     };
-    
+    // ---------------------------------------
+
     container.addEventListener('mousemove', handleMouseMove);
     container.addEventListener('mouseleave', handleMouseLeave);
-    
-    // Обработчики событий для тачскрина
+
+    // --- АДАПТИРУЕМ TOUCH ДЛЯ ПРЯМОГО ПРИСВАИВАНИЯ ---
     let isTouching = false;
-    let pressStartTime = 0;
-    let isPressActive = false;
-    
+    // Убираем pressStartTime, isPressActive, pressThreshold, checkLongPress - они были для lerp
+
     const handleTouchStart = (e: TouchEvent) => {
-      e.preventDefault();
-      isTouching = true;
-      pressStartTime = Date.now();
-      
-      if (e.touches.length > 0) {
-        const rect = canvas.getBoundingClientRect();
-        mouse = {
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top
-        };
-      }
+        e.preventDefault();
+        isTouching = true;
+        if (e.touches.length > 0) {
+            const rect = canvas.getBoundingClientRect();
+            mouse = {
+                x: e.touches[0].clientX - rect.left,
+                y: e.touches[0].clientY - rect.top
+            };
+        }
     };
-    
+
     const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault();
-      if (e.touches.length > 0) {
-        const rect = canvas.getBoundingClientRect();
-        mouse = {
-          x: e.touches[0].clientX - rect.left,
-          y: e.touches[0].clientY - rect.top
-        };
-      }
+        e.preventDefault();
+        if (e.touches.length > 0) {
+            const rect = canvas.getBoundingClientRect();
+            mouse = {
+                x: e.touches[0].clientX - rect.left,
+                y: e.touches[0].clientY - rect.top
+            };
+        }
     };
-    
+
     const handleTouchEnd = () => {
-      isTouching = false;
-      isPressActive = false;
-      mouse = { ...neutralPosition };
+        isTouching = false;
+        // Плавно уводить не будем, просто сбросим позицию
+        mouse = { ...neutralPosition };
     };
-    
+    // -----------------------------------------------
+
     container.addEventListener('touchstart', handleTouchStart, { passive: false } as EventListenerOptions);
     container.addEventListener('touchmove', handleTouchMove, { passive: false } as EventListenerOptions);
     container.addEventListener('touchend', handleTouchEnd);
-    
-    // Проверка долгого нажатия
-    const pressThreshold = 300;
-    const checkLongPress = () => {
-      if (isTouching && !isPressActive && Date.now() - pressStartTime >= pressThreshold) {
-        isPressActive = true;
-      }
-      
-      if (!isTouching) {
-        isPressActive = false;
-      }
-    };
-    
-    // Формула кривой бесконечности
+    container.addEventListener('touchcancel', handleTouchEnd); // Добавим touchcancel
+
+    // Формулы кривой и касательной (без изменений)
     const infinityCurve = (t: number) => {
-      const a = canvas.width / 3;
+      const a = canvas.width / 3.5; // Чуть уменьшим кривую
       const x = a * Math.cos(t);
       const y = a * Math.sin(t) * Math.cos(t);
       return { x: x + canvas.width / 2, y: y + canvas.height / 2 };
     };
-    
-    // Формула касательной к кривой
+
     const tangentAt = (t: number) => {
-      const a = canvas.width / 3;
+      const a = canvas.width / 3.5;
       const dx = -a * Math.sin(t);
-      const dy = a * Math.cos(2*t);
+      const dy = a * (Math.cos(t)**2 - Math.sin(t)**2); // cos(2t) = cos^2(t) - sin^2(t)
       const length = Math.sqrt(dx*dx + dy*dy);
-      return { x: dx / length, y: dy / length };
+      return length > 0 ? { x: dx / length, y: dy / length } : { x: 1, y: 0 };
     };
-    
-    // Расчет расстояния между точками
+
     const distance = (p1: {x: number, y: number}, p2: {x: number, y: number}) => {
       const dx = p2.x - p1.x;
       const dy = p2.y - p1.y;
       return Math.sqrt(dx*dx + dy*dy);
     };
-    
+
     // Анимация
     let animationFrameId: number;
     let lastTime = 0;
-    
+
     const animate = (currentTime: number) => {
       animationFrameId = requestAnimationFrame(animate);
-      
-      const deltaTime = lastTime ? (currentTime - lastTime) : 16;
+
+      // --- ВОЗВРАЩАЕМ ОРИГИНАЛЬНЫЙ DELTATIME ---
+      const deltaTime = lastTime ? (currentTime - lastTime) : 16; // Время в мс
       lastTime = currentTime;
-      
-      // Обновляем время анимации для смены цветов
+      // ---------------------------------------
+
       animationTimeRef.current = currentTime;
-      
-      // Проверка долгого нажатия для мобильных устройств
-      checkLongPress();
-      
+      // Убираем checkLongPress
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
-      // Обновление и отрисовка каждой частицы
+
       particles.forEach(p => {
-        // Обновление прогресса по кривой
+        // --- ОБНОВЛЕНИЕ С ОРИГИНАЛЬНЫМ DELTATIME ---
         p.curveProgress += p.curveSpeed * deltaTime;
         if (p.curveProgress > 1) p.curveProgress -= 1;
-        
-        // Обновление жизненного цикла
+        if (p.curveProgress < 0) p.curveProgress += 1;
+
         p.lifeProgress += p.lifeSpeed * deltaTime;
         if (p.lifeProgress > 1) p.lifeProgress -= 1;
-        
-        // Расчет позиции на кривой
+        // ------------------------------------------
+
         const t = p.curveProgress * TWO_PI;
         const basePos = infinityCurve(t);
-        
-        // Добавление флуктуаций
+
         const fluctAmplitude = canvas.width * 0.01;
         const fluctX = fluctAmplitude * Math.sin(p.phase + t);
         const fluctY = fluctAmplitude * Math.cos(p.phase + t);
-        
+
         let pos = {
           x: basePos.x + fluctX,
           y: basePos.y + fluctY
         };
-        
-        // Добавление смещения по толщине потока
+
         const tangent = tangentAt(t);
         const perp = { x: -tangent.y, y: tangent.x };
         pos.x += perp.x * p.thicknessOffset;
         pos.y += perp.y * p.thicknessOffset;
-        
-        // Влияние курсора
+
+        // Усиленное взаимодействие (без изменений в логике, но УБИРАЕМ deltaTime из силы)
         const distToMouse = distance(basePos, mouse);
-        
-        if (distToMouse < attractionRadius && distToMouse > deadZone) {
+
+        if (mouse.x !== neutralPosition.x && distToMouse < attractionRadius && distToMouse > deadZone) {
           const effectiveDist = Math.max(distToMouse, deadZone);
-          const attractForce = Math.pow((attractionRadius - effectiveDist) / attractionRadius, 2);
-          
+          const attractPower = Math.pow((attractionRadius - effectiveDist) / attractionRadius, 2);
           const dx = (mouse.x - basePos.x);
           const dy = (mouse.y - basePos.y);
           const length = Math.sqrt(dx*dx + dy*dy);
-          
+
           if (length > 0) {
-            const attractDir = {
-              x: dx / length,
-              y: dy / length
-            };
-            
-            pos.x += attractDir.x * attractForce * attractStrength;
-            pos.y += attractDir.y * attractForce * attractStrength;
+            const attractDir = { x: dx / length, y: dy / length };
+            // --- УБИРАЕМ DELTATIME ИЗ СИЛЫ ---
+            pos.x += attractDir.x * attractPower * attractStrength;
+            pos.y += attractDir.y * attractPower * attractStrength;
+            // ---------------------------------
           }
         }
-        
-        // Масштабирование в зависимости от жизненного цикла
+
+        // Масштабирование и цвет (без изменений в логике)
         const scaleVal = Math.sin(Math.PI * p.lifeProgress);
-        let finalSize = p.size * scaleVal * 2;
-        
-        // Увеличение размера возле курсора и изменение цвета согласно анимации colorPulse
-        if (distToMouse < mouseEffectRadius) {
-          const enlargeFactor = (1 + 3 * ((mouseEffectRadius - distToMouse) / mouseEffectRadius)) / 2;
-          finalSize *= enlargeFactor;
-          
-          // Изменение цвета возле курсора на цвет из анимации
-          p.color = getAnimationColor(currentTime);
+        let finalSize = p.size * scaleVal;
+
+        if (mouse.x !== neutralPosition.x && distToMouse < mouseEffectRadius) {
+           const enlargeRatio = (mouseEffectRadius - distToMouse) / mouseEffectRadius;
+           const enlargeFactor = 1 + particleEnlargeFactor * enlargeRatio;
+           finalSize *= enlargeFactor;
+           p.color = getAnimationColor(currentTime); // Оригинальная логика цвета
         } else {
-          // Белый цвет по умолчанию
-          p.color = '#FFFFFF';
+           p.color = 'var(--color-foreground)'; // Стандартный цвет из CSS
         }
-        
-        // Проверка, чтобы радиус не был отрицательным
+
         finalSize = Math.max(0.1, finalSize);
-        
-        // Отрисовка частицы
+
+        // Отрисовка
         ctx.beginPath();
         ctx.arc(pos.x, pos.y, finalSize, 0, TWO_PI);
-        ctx.fillStyle = p.color;
+        // Используем CSS переменную для цвета по умолчанию
+        ctx.fillStyle = p.color === 'var(--color-foreground)' ? getComputedStyle(canvas).getPropertyValue('--color-foreground').trim() || '#FFFFFF' : p.color;
         ctx.fill();
       });
     };
-    
-    // Запуск анимации
+
     animate(0);
-    
-    // Очистка при размонтировании компонента
+
+    // Очистка (адаптирована)
     return () => {
       window.removeEventListener('resize', resize);
-      
-      // Удаление обработчиков событий
       container.removeEventListener('mousemove', handleMouseMove);
       container.removeEventListener('mouseleave', handleMouseLeave);
       container.removeEventListener('touchstart', handleTouchStart);
       container.removeEventListener('touchmove', handleTouchMove);
       container.removeEventListener('touchend', handleTouchEnd);
-      
-      // Остановка анимации
+      container.removeEventListener('touchcancel', handleTouchEnd); // Добавим touchcancel
       cancelAnimationFrame(animationFrameId);
     };
-  }, [text, particleCount]);
-  
+    // Обновляем зависимости, убирая ненужные
+  }, [text, particleCount, attractStrength, particleEnlargeFactor, mouseEffectRadiusFactor, attractionRadiusFactor, deadZoneFactor]);
+
   return (
     <div className={cn("w-full max-w-4xl mx-auto relative", className)}>
-      <div 
-        ref={containerRef} 
+      <div
+        ref={containerRef}
         className="w-full aspect-square relative"
         style={{ userSelect: 'none', touchAction: 'none' }}
       >
-        <div 
+        <div
           ref={textRef}
           className="absolute font-bold italic pointer-events-none z-10"
-          style={{ 
+          style={{
             transform: 'translate(-50%, -50%)',
             whiteSpace: 'nowrap'
           }}
@@ -366,4 +335,4 @@ const InfinityEffect = ({
   );
 };
 
-export default InfinityEffect; 
+export default InfinityEffect;
