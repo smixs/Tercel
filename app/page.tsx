@@ -1,6 +1,6 @@
 "use client"
 
-import { Particles } from "@/components/ui/particles"
+import Particles from "@/components/ui/particles-ogl"
 import TranscriptionSection from "@/components/transcription-section"
 import InfinityEffect from "@/components/ui/infinity-effect"
 import { GooeyText } from "@/components/ui/gooey-text"
@@ -26,13 +26,18 @@ export default function Home() {
   
   return (
     <main className="relative min-h-screen bg-background">
-      <Particles 
-        className="fixed inset-0 z-0" 
-        quantity={150} 
-        ease={50} 
-        size={1.2}
-        speedFactor={isTranscribing ? 5 : 1} 
-      />
+      <div className="fixed inset-0 z-0">
+        <Particles
+          particleColors={['#ffffff', '#ffffff']}
+          particleCount={200}
+          particleSpread={10}
+          speed={isTranscribing ? 0.5 : 0.1}
+          particleBaseSize={100}
+          moveParticlesOnHover={true}
+          alphaParticles={false}
+          disableRotation={false}
+        />
+      </div>
       
       {/* Контейнер с заголовком и анимацией в потоке документа */}
       <div className="relative w-full flex flex-col items-center pt-16 md:pt-20">

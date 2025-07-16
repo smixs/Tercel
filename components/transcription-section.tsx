@@ -1,8 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { FileText, Headphones, AlertCircle, ClipboardCopy, Download } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { FileText, Headphones, AlertCircle, ClipboardCopy, Download, Clock } from "lucide-react"
 import { ParticleButton } from "@/components/ui/particle-button"
 
 import { Dropzone } from "@/components/ui/dropzone"
@@ -15,9 +14,37 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 
+interface TranscriptionWord {
+  word: string
+  start: number
+  end: number
+  language?: string
+  probability?: number
+  hallucination_score?: number
+  speaker_id?: string
+}
+
+interface TranscriptionSegment {
+  id: number
+  text: string
+  start: number
+  end: number
+  speaker_id?: string
+  words?: TranscriptionWord[]
+}
+
+interface VerboseTranscriptionResponse {
+  text: string
+  task: string
+  language: string
+  duration: number
+  segments: TranscriptionSegment[]
+  words?: TranscriptionWord[]
+}
+
 interface TranscriptionResult {
-  text: string | Record<string, unknown>
-  format: "srt" | "json" | "text" | "vtt"
+  text: string | VerboseTranscriptionResponse
+  format: "text" | "verbose_json"
 }
 
 interface TranscriptionSectionProps {
@@ -41,16 +68,30 @@ export default function TranscriptionSection({
 }: TranscriptionSectionProps) {
   const [result, setResult] = useState<TranscriptionResult | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [selectedFormat] = useState<"srt" | "json" | "text" | "vtt">("text")
   const [activeTab, setActiveTab] = useState("upload")
   const [error, setError] = useState<string | null>(null)
   const [currentStage, setCurrentStage] = useState<keyof typeof TRANSCRIPTION_STAGES | null>(null)
   const [uploadProgress, setUploadProgress] = useState(0)
+  const [showTimestamps, setShowTimestamps] = useState(false)
 
   // Уведомляем родительский компонент об изменении результата
   useEffect(() => {
     onResultChange?.(!!result)
   }, [result, onResultChange])
+
+  // Функция для форматирования времени в MM:SS.s формат
+  const formatTimestamp = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60)
+    const remainingSeconds = seconds % 60
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toFixed(1).padStart(4, '0')}`
+  }
+
+  // Функция для форматирования текста с временными метками
+  const formatTextWithTimestamps = (data: VerboseTranscriptionResponse): string => {
+    return data.segments
+      .map(segment => `[${formatTimestamp(segment.start)} - ${formatTimestamp(segment.end)}] ${segment.text}`)
+      .join('\n')
+  }
 
   // Функция для отправки файла через XMLHttpRequest
   const sendFileWithProgress = (file: File, apiKey: string): Promise<string> => {
@@ -64,8 +105,8 @@ export default function TranscriptionSection({
       formData.append("alignment_model", "tdnn_ffn")
       formData.append("preprocessing", "dynamic")
       formData.append("temperature", "0")
-      formData.append("timestamp_granularities", "segment")
-      formData.append("response_format", "text")
+      formData.append("timestamp_granularities", "word,segment")
+      formData.append("response_format", "verbose_json")
 
       // Отслеживаем прогресс загрузки
       xhr.upload.addEventListener("progress", (event) => {
@@ -132,16 +173,18 @@ export default function TranscriptionSection({
       setCurrentStage("TRANSCRIBE")
       
       // Обрабатываем ответ
-      let data = responseText
+      let data: VerboseTranscriptionResponse
       try {
         data = JSON.parse(responseText)
+        console.log("Получен verbose_json ответ:", data)
       } catch (e) {
-        console.log("Ответ не является JSON, используем как текст")
+        console.error("Ошибка парсинга JSON ответа:", e)
+        throw new Error("Неверный формат ответа от API")
       }
       
       setResult({
         text: data,
-        format: "text"
+        format: "verbose_json"
       })
       
       // Переключаемся на вкладку результатов
@@ -163,20 +206,22 @@ export default function TranscriptionSection({
   const handleDownload = () => {
     if (!result) return
     
-    const content = typeof result.text === 'object' 
-      ? JSON.stringify(result.text, null, 2) 
-      : result.text
+    let content: string
+    if (result.format === 'verbose_json' && typeof result.text === 'object') {
+      // Если включены timestamps, используем форматированный текст
+      content = showTimestamps 
+        ? formatTextWithTimestamps(result.text as VerboseTranscriptionResponse)
+        : (result.text as VerboseTranscriptionResponse).text
+    } else {
+      content = result.text as string
+    }
       
-    const blob = new Blob([content], { 
-      type: result.format === 'json' 
-        ? 'application/json' 
-        : 'text/plain' 
-    })
+    const blob = new Blob([content], { type: 'text/plain' })
     
     const url = URL.createObjectURL(blob)
     const a = document.createElement("a")
     a.href = url
-    a.download = `transcription.${result.format}`
+    a.download = `transcription${showTimestamps ? '_with_timestamps' : ''}.txt`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -186,9 +231,15 @@ export default function TranscriptionSection({
   const handleCopy = () => {
     if (!result) return
     
-    const content = typeof result.text === 'object' 
-      ? JSON.stringify(result.text, null, 2) 
-      : result.text
+    let content: string
+    if (result.format === 'verbose_json' && typeof result.text === 'object') {
+      // Если включены timestamps, используем форматированный текст
+      content = showTimestamps 
+        ? formatTextWithTimestamps(result.text as VerboseTranscriptionResponse)
+        : (result.text as VerboseTranscriptionResponse).text
+    } else {
+      content = result.text as string
+    }
       
     navigator.clipboard.writeText(content)
       .then(() => {
@@ -199,11 +250,12 @@ export default function TranscriptionSection({
       })
   }
 
-  const formatResultText = (text: string | Record<string, unknown>, format: string): string => {
-    if (format === 'json') {
-      return typeof text === 'object' 
-        ? JSON.stringify(text, null, 2)
-        : text
+  const formatResultText = (text: string | VerboseTranscriptionResponse, format: string): string => {
+    if (format === 'verbose_json' && typeof text === 'object') {
+      // Если включены timestamps, показываем форматированный текст
+      return showTimestamps 
+        ? formatTextWithTimestamps(text as VerboseTranscriptionResponse)
+        : (text as VerboseTranscriptionResponse).text
     }
     return text as string
   }
@@ -271,7 +323,7 @@ export default function TranscriptionSection({
                 onFileDrop={handleFileDrop}
                 className="h-full"
                 currentStage={currentStage}
-                uploadProgress={uploadProgress}
+                uploadProgress={currentStage === "UPLOAD" ? uploadProgress : calculateTotalProgress()}
                 stageMessage={getCurrentStageMessage()}
               />
             </div>
@@ -281,10 +333,32 @@ export default function TranscriptionSection({
           {result && (
             <Card>
               <CardHeader>
-                <CardTitle>Результат транскрибирования</CardTitle>
-                <CardDescription>
-                  Формат: TEXT
-                </CardDescription>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>Результат транскрибирования</CardTitle>
+                    <CardDescription>
+                      Формат: {showTimestamps ? 'TEXT с временными метками' : 'TEXT'}
+                    </CardDescription>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4" />
+                    <label 
+                      htmlFor="timestamps-toggle" 
+                      className="text-sm font-medium cursor-pointer"
+                    >
+                      Показать временные метки
+                    </label>
+                    <Button
+                      id="timestamps-toggle"
+                      variant={showTimestamps ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setShowTimestamps(!showTimestamps)}
+                      className="ml-2"
+                    >
+                      {showTimestamps ? "Включено" : "Выключено"}
+                    </Button>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <pre className="min-h-[20px] max-h-[500px] md:max-h-[600px] h-auto overflow-auto whitespace-pre-wrap break-words rounded-md bg-muted p-4 text-sm transition-all">
