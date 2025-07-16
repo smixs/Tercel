@@ -169,7 +169,7 @@ export function GooeyText({
 
   // Новая статичная версия
   return (
-    <div className={cn("relative flex flex-col items-center", className)}>
+    <div className={cn("relative flex flex-col items-center pointer-events-none", className)}>
       <span className={cn(
         "text-5xl md:text-6xl lg:text-7xl font-bold tracking-wider text-white",
         textClassName

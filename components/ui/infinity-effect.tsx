@@ -329,7 +329,7 @@ const InfinityEffect = ({
             whiteSpace: 'nowrap'
           }}
         ></div>
-        <canvas ref={canvasRef} className="w-full h-full"></canvas>
+        <canvas ref={canvasRef} className="w-full h-full pointer-events-none"></canvas>
       </div>
     </div>
   );

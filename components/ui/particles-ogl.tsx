@@ -105,6 +105,7 @@ const Particles: React.FC<ParticlesProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const targetMouseRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
     const container = containerRef.current;
@@ -129,13 +130,25 @@ const Particles: React.FC<ParticlesProps> = ({
 
     const handleMouseMove = (e: MouseEvent) => {
       const rect = container.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
-      mouseRef.current = { x, y };
+      
+      // Проверяем, находится ли мышь в области контейнера
+      const isInBounds = e.clientX >= rect.left && 
+                         e.clientX <= rect.right && 
+                         e.clientY >= rect.top && 
+                         e.clientY <= rect.bottom;
+      
+      if (isInBounds) {
+        const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
+        targetMouseRef.current = { x, y };
+      } else {
+        // Сбрасываем целевую позицию если мышь вне контейнера
+        targetMouseRef.current = { x: 0, y: 0 };
+      }
     };
 
     if (moveParticlesOnHover) {
-      container.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mousemove", handleMouseMove);
     }
 
     const count = particleCount;
@@ -194,6 +207,11 @@ const Particles: React.FC<ParticlesProps> = ({
       program.uniforms.uTime.value = elapsed * 0.001;
 
       if (moveParticlesOnHover) {
+        // Плавная интерполяция к целевой позиции мыши
+        const lerpFactor = 0.1; // Скорость сглаживания (0.1 = 10% за кадр)
+        mouseRef.current.x += (targetMouseRef.current.x - mouseRef.current.x) * lerpFactor;
+        mouseRef.current.y += (targetMouseRef.current.y - mouseRef.current.y) * lerpFactor;
+        
         particles.position.x = -mouseRef.current.x * particleHoverFactor;
         particles.position.y = -mouseRef.current.y * particleHoverFactor;
       } else {
@@ -215,7 +233,7 @@ const Particles: React.FC<ParticlesProps> = ({
     return () => {
       window.removeEventListener("resize", resize);
       if (moveParticlesOnHover) {
-        container.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mousemove", handleMouseMove);
       }
       cancelAnimationFrame(animationFrameId);
       if (container.contains(gl.canvas)) {
