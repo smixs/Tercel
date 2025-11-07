@@ -136,7 +136,7 @@ export default function TranscriptionSection({
       })
 
       // Настраиваем и отправляем запрос
-      xhr.open("POST", "https://audio-prod.us-virginia-1.direct.fireworks.ai/v1/audio/transcriptions")
+      xhr.open("POST", "https://audio-prod.api.fireworks.ai/v1/audio/transcriptions")
       xhr.setRequestHeader("Authorization", `Bearer ${apiKey}`)
       xhr.send(formData)
     })

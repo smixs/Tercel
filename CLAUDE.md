@@ -40,7 +40,7 @@ npm run lint
 The application currently makes **client-side calls** to the Fireworks AI API using XMLHttpRequest with progress tracking. The API key is exposed via `NEXT_PUBLIC_API_KEY` environment variable. 
 
 **Fireworks API Configuration:**
-- Endpoint: `https://audio-prod.us-virginia-1.direct.fireworks.ai/v1/audio/transcriptions`
+- Endpoint: `https://audio-prod.api.fireworks.ai/v1/audio/transcriptions`
 - Parameters:
   - `vad_model`: "silero"
   - `alignment_model`: "tdnn_ffn" 
