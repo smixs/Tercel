@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh" 2>/dev/null || true
+# Prefer lint-staged if installed locally
+if [ -x "./node_modules/.bin/lint-staged" ]; then
+  ./node_modules/.bin/lint-staged
+  exit $?
+fi
+# Fallback: format staged files if tools available
+STAGED="$(git diff --name-only --cached --diff-filter=ACM)"
+[ -z "$STAGED" ] && exit 0
+if [ -x "./node_modules/.bin/prettier" ]; then
+  echo "$STAGED" | xargs ./node_modules/.bin/prettier --write --loglevel warn || true
+  echo "$STAGED" | xargs git add -A
+fi
+if [ -x "./node_modules/.bin/eslint" ]; then
+  echo "$STAGED" | xargs ./node_modules/.bin/eslint --fix || true
+  echo "$STAGED" | xargs git add -A
+fi
+exit 0

@@ -93,8 +93,8 @@ export default function TranscriptionSection({
       .join('\n')
   }
 
-  // Функция для отправки файла через XMLHttpRequest
-  const sendFileWithProgress = (file: File, apiKey: string): Promise<string> => {
+  // Функция для отправки файла через XMLHttpRequest на серверный прокси
+  const sendFileWithProgress = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest()
       const formData = new FormData()
@@ -135,9 +135,8 @@ export default function TranscriptionSection({
         reject(new Error("Ошибка сети при отправке файла"))
       })
 
-      // Настраиваем и отправляем запрос
-      xhr.open("POST", "https://audio-prod.us-virginia-1.direct.fireworks.ai/v1/audio/transcriptions")
-      xhr.setRequestHeader("Authorization", `Bearer ${apiKey}`)
+      // Настраиваем и отправляем запрос через серверный прокси
+      xhr.open("POST", "/api/transcribe")
       xhr.send(formData)
     })
   }
@@ -148,20 +147,13 @@ export default function TranscriptionSection({
       setError(null)
       setCurrentStage("UPLOAD")
       setUploadProgress(0)
-      
-      const apiKey = process.env.NEXT_PUBLIC_API_KEY
-      console.log('API ключ доступен:', !!apiKey)
-      
-      if (!apiKey) {
-        throw new Error("API ключ не настроен. Проверьте файл .env.local")
-      }
-      
+
       onTranscriptionStart?.()
-      
-      console.log(`Отправка файла ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} МБ) в Fireworks API`)
-      
+
+      console.log(`Отправка файла ${file.name} (${(file.size / (1024 * 1024)).toFixed(2)} МБ) через серверный прокси`)
+
       // Этап загрузки
-      const responseText = await sendFileWithProgress(file, apiKey)
+      const responseText = await sendFileWithProgress(file)
       
       // Имитируем этапы обработки (т.к. API не предоставляет информацию о них)
       setCurrentStage("TRANSCODE")

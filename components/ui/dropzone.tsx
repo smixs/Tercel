@@ -50,9 +50,9 @@ export function Dropzone({
   const { getRootProps, getInputProps, isDragActive, isDragReject } = useDropzone({
     onDrop,
     accept: {
-      "*/*": [] // Принимаем все типы файлов
+      "audio/*": [".mp3", ".wav", ".m4a", ".ogg", ".flac", ".webm", ".aac", ".wma", ".opus"]
     },
-    maxSize: Number.MAX_SAFE_INTEGER, // Максимально возможный размер
+    maxSize: Number.MAX_SAFE_INTEGER,
     multiple: false,
   })
 
